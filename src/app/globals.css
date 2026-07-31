@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
+/* 
+  Premium Cricket Zone Design Tokens
+  Adhering to 8px spacing, specific brand colors, and constrained UI rules. 
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Theme Variables */
+  --bg-base: #ffffff;
+  --bg-surface: #f4f4f5; /* Zinc 100 */
+  --bg-elevated: #e4e4e7; /* Zinc 200 */
+  
+  --text-primary: #09090b; /* Zinc 950 */
+  --text-secondary: #52525b; /* Zinc 600 */
+  --text-muted: #a1a1aa; /* Zinc 400 */
+  
+  --brand-primary: #2563eb;
+  --brand-secondary: #7c3aed;
+  --brand-accent: #10b981;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  /* Dark Theme Variables */
+  --bg-base: #09090b;
+  --bg-surface: #18181b;
+  --bg-elevated: #27272a;
+  
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+
+  --brand-primary: #3b82f6; /* slightly lighter for dark mode */
+  --brand-secondary: #8b5cf6;
+  --brand-accent: #34d399;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  
+  /* Color Palette mapped to CSS variables */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-accent: var(--brand-accent);
+  
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  /* Shadows (Enterprise constraints) */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* Animation & Transition Timings */
+  --animate-hover: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-drawer: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-page: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base resets for a cleaner UI */
+* {
+  border-color: var(--bg-elevated);
 }
