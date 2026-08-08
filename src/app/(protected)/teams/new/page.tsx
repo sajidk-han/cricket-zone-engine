@@ -5,8 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Input } from '@/shared/components/ui/Input'
 import { Button } from '@/shared/components/ui/Button'
 import Link from 'next/link'
-import { createTeam } from '@/app/actions/teams'
+import { createTeam, updateTeamLogo } from '@/app/actions/teams'
 import { useFormStatus } from 'react-dom'
+import { ImageUpload, ImageUploadHandle } from '@/shared/components/ui/ImageUpload'
+import { toast } from 'react-hot-toast'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -19,6 +21,36 @@ function SubmitButton() {
 
 export default function NewTeamPage() {
   const formRef = useRef<HTMLFormElement>(null)
+  const uploadRef = useRef<ImageUploadHandle>(null)
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  const handleSubmit = async (formData: FormData) => {
+    setIsSubmitting(true)
+    try {
+      // 1. Create Team first
+      const team = await createTeam(formData)
+
+      // 2. Upload Logo if a file was selected
+      if (uploadRef.current?.hasFile()) {
+        try {
+          const publicUrl = await uploadRef.current.upload(
+            `${team.org_id}/${team.id}`, 
+            'logo.webp'
+          )
+          if (publicUrl) {
+            await updateTeamLogo(team.id, publicUrl)
+          }
+        } catch (uploadError: any) {
+          toast.error("Team created, but logo upload failed: " + uploadError.message)
+        }
+      }
+      
+      window.location.href = '/teams'
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create team")
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -30,10 +62,7 @@ export default function NewTeamPage() {
         <h1 className="text-3xl font-bold text-text-primary tracking-tight">Register Team</h1>
       </div>
 
-      <form ref={formRef} action={async (formData) => {
-        await createTeam(formData)
-        window.location.href = '/teams'
-      }}>
+      <form ref={formRef} action={handleSubmit}>
         <Card>
           <CardHeader>
             <CardTitle>Team Identity</CardTitle>
@@ -65,10 +94,11 @@ export default function NewTeamPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-text-secondary">Logo URL</label>
-              <Input 
-                name="logoUrl"
-                placeholder="https://example.com/logo.png" 
+              <label className="block text-sm font-medium text-text-secondary">Team Logo</label>
+              <ImageUpload 
+                ref={uploadRef}
+                bucketName="team-logos"
+                autoUpload={false} // Defer upload until form submit
               />
             </div>
 

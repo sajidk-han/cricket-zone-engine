@@ -38,6 +38,25 @@ export async function createTeam(formData: FormData) {
   return data
 }
 
+export async function updateTeamLogo(teamId: string, logoUrl: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('teams')
+    .update({ logo_url: logoUrl })
+    .eq('id', teamId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Update team logo error:', error)
+    throw new Error(error.message)
+  }
+
+  revalidatePath('/teams')
+  revalidatePath(`/teams/${teamId}`)
+  return data
+}
+
 export async function fetchTeams() {
   const supabase = await createClient()
   const { data, error } = await supabase

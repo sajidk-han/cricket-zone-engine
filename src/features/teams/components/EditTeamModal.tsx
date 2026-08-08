@@ -4,11 +4,13 @@ import React, { useState } from 'react'
 import { Button } from '@/shared/components/ui/Button'
 import { X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { updateTeam } from '@/app/actions/teams'
+import { updateTeam, updateTeamLogo } from '@/app/actions/teams'
+import { ImageUpload, ImageUploadHandle } from '@/shared/components/ui/ImageUpload'
 
 export function EditTeamModal({ team }: { team: any }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const uploadRef = React.useRef<ImageUploadHandle>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -19,6 +21,21 @@ export function EditTeamModal({ team }: { team: any }) {
       const res = await updateTeam(team.id, formData)
       
       if (res.success) {
+        // Now handle image upload if a new file was selected
+        if (uploadRef.current?.hasFile()) {
+          try {
+            const publicUrl = await uploadRef.current.upload(
+              `${team.org_id}/${team.id}`, 
+              'logo.webp'
+            )
+            if (publicUrl) {
+              await updateTeamLogo(team.id, publicUrl)
+            }
+          } catch (uploadError: any) {
+            toast.error("Team updated, but logo upload failed: " + uploadError.message)
+          }
+        }
+        
         toast.success(res.message)
         setIsOpen(false)
       } else {
@@ -78,6 +95,18 @@ export function EditTeamModal({ team }: { team: any }) {
                     defaultValue={team.short_name}
                     placeholder="KRD"
                     className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary uppercase"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <label className="block text-sm font-medium text-text-secondary mb-1">
+                    Team Logo
+                  </label>
+                  <ImageUpload 
+                    ref={uploadRef}
+                    bucketName="team-logos"
+                    autoUpload={false}
+                    currentImageUrl={team.logo_url}
                   />
                 </div>
 

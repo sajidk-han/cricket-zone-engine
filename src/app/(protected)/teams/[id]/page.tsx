@@ -34,8 +34,12 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-bg-base border border-bg-elevated flex items-center justify-center text-3xl">
-              {team.short_name.charAt(0)}
+            <div className="w-16 h-16 rounded-2xl bg-bg-base border border-bg-elevated flex items-center justify-center text-3xl overflow-hidden shadow-sm">
+              {team.logo_url ? (
+                <img src={team.logo_url} alt={`${team.name} Logo`} className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-bold">{team.short_name.substring(0, 3)}</span>
+              )}
             </div>
             <div>
               <h1 className="text-3xl font-bold text-text-primary tracking-tight">{team.name}</h1>
