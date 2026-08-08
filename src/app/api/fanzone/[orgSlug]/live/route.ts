@@ -6,11 +6,12 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { orgSlug: string } }
+  { params }: { params: Promise<{ orgSlug: string }> }
 ) {
   try {
     const supabase = createAdminClient()
-    const orgSlug = params.orgSlug
+    const resolvedParams = await params
+    const orgSlug = resolvedParams.orgSlug
 
     // Resolve Organization ID from Slug
     const { data: org, error: orgError } = await supabase
