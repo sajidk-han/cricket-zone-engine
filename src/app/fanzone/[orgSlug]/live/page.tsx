@@ -111,7 +111,7 @@ export default async function PublicLiveFeed({ params }: { params: Promise<{ org
               <h2 className="text-xl font-bold text-text-primary uppercase tracking-wider">Upcoming Fixtures</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {upcomingMatches.filter(m => m.id !== heroMatch?.id).map((match: any) => (
+              {upcomingMatches.filter((m: any) => m.id !== heroMatch?.id).map((match: any) => (
                 <Link key={match.id} href={`/fanzone/${orgSlug}/matches/${match.id}`} className="block">
                   <MatchCard match={match} isLive={false} variant="compact" />
                 </Link>

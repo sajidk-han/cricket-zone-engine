@@ -29,7 +29,7 @@ async function getFeaturedTournaments() {
 
     // Map them with dummy live status or fetch matches
     // Here we just return the orgs we have, marking them as active
-    return orgs.map(org => ({
+    return orgs.map((org: any) => ({
       id: org.id,
       name: org.name,
       slug: org.slug,
