@@ -6,6 +6,7 @@ import { Input } from '@/shared/components/ui/Input'
 import { Button } from '@/shared/components/ui/Button'
 import { login } from '@/app/actions/auth'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
@@ -75,11 +76,14 @@ export default function LoginPage() {
             <Button variant="primary" type="submit" className="w-full" disabled={loading}>
               {loading ? 'Authenticating...' : 'Sign In'}
             </Button>
-            
-            <p className="text-center text-xs text-text-muted mt-4">
-              If an account doesn't exist, it will be created automatically in development mode.
-            </p>
           </form>
+
+          <div className="text-center text-xs text-text-muted mt-6 space-y-2 relative z-50">
+            <p>Don't have an organization account?</p>
+            <a href="/register" className="text-brand-primary hover:underline font-bold block p-2">
+              Register Your Team / Organization
+            </a>
+          </div>
         </CardContent>
       </Card>
     </div>

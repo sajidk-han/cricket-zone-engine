@@ -44,7 +44,7 @@ export default function TeamDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 p-10 font-sans text-white">
+    <main className="min-h-screen bg-gray-950 p-10 font-sans text-text-primary">
       <h1 className="text-3xl font-bold mb-8 text-blue-500 border-b border-gray-800 pb-4">
         Squad Management
       </h1>
@@ -58,7 +58,7 @@ export default function TeamDashboard() {
               <label className="block text-sm text-gray-400 mb-1">Player Name</label>
               <input 
                 type="text" required value={playerName}
-                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500"
                 onChange={(e) => setPlayerName(e.target.value)}
               />
             </div>
@@ -67,7 +67,7 @@ export default function TeamDashboard() {
               <select 
                 value={role} 
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500"
               >
                 <option value="batsman">Batsman</option>
                 <option value="bowler">Bowler</option>

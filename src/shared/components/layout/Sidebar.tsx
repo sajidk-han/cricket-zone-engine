@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
-import { Trophy, LayoutDashboard, Shield, User, PlayCircle, Settings, ArrowLeft, Activity, List, Users } from 'lucide-react'
+import { Trophy, LayoutDashboard, Shield, User, PlayCircle, Settings, ArrowLeft, Activity, List, Users, Globe, ShieldAlert } from 'lucide-react'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -19,6 +19,7 @@ export function Sidebar() {
   // ==========================================
   const globalNavItems = [
     { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
+    { name: 'Public Fan Zone', href: '/fanzone/default-org', icon: <Globe size={20} /> },
     { name: 'Tournaments', href: '/tournaments', icon: <Trophy size={20} /> },
     { name: 'Teams', href: '/teams', icon: <Shield size={20} /> },
     { name: 'Players', href: '/players', icon: <User size={20} /> },
@@ -48,7 +49,7 @@ export function Sidebar() {
         {!isTournamentWorkspace ? (
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="text-2xl">🏏</span>
-            <span className="text-xl font-black text-brand-primary tracking-tighter">CricketZone</span>
+            <span className="text-xl font-black text-green-400 tracking-tighter">CricketZone</span>
           </Link>
         ) : (
           <Link href="/tournaments" className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors group">
@@ -84,10 +85,11 @@ export function Sidebar() {
             <Link 
               key={item.name} 
               href={item.href}
+              target={'target' in item ? item.target : undefined}
               className={`
                 flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all font-medium text-sm group
                 ${isActive 
-                  ? 'bg-brand-primary/10 text-brand-primary shadow-sm' 
+                  ? 'bg-green-400/10 text-green-400 shadow-sm' 
                   : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
                 }
               `}

@@ -30,7 +30,7 @@ export function GlobalHeader() {
       <div className="flex items-center gap-6">
         <Link href="/dashboard" className="flex items-center gap-2">
           <span className="text-2xl">🏏</span>
-          <span className="text-xl font-black text-brand-primary tracking-tighter hidden md:block">CricketZone</span>
+          <span className="text-xl font-black text-green-400 tracking-tighter hidden md:block">CricketZone</span>
         </Link>
         
         <div className="h-6 w-px bg-bg-elevated hidden md:block"></div>

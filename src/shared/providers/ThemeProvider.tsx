@@ -3,7 +3,17 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 
-// Type import ko seedha next-themes se uthayein ya props ko direct define karein
+// Suppress next-themes script tag error in React 19 / Next 15+
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  const orig = console.error;
+  console.error = (...args: any[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('Encountered a script tag')) {
+      return;
+    }
+    orig.apply(console, args);
+  };
+}
+
 export function ThemeProvider({ 
   children, 
   ...props 

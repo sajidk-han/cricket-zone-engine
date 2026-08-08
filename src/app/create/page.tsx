@@ -29,7 +29,7 @@ export default function CreateTournament() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 p-10 font-sans text-white flex justify-center items-center">
+    <main className="min-h-screen bg-gray-950 p-10 font-sans text-text-primary flex justify-center items-center">
       <form onSubmit={handleCreate} className="bg-gray-900 border border-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-blue-500 border-b border-gray-700 pb-2">Launch New Tournament</h2>
         
@@ -38,7 +38,7 @@ export default function CreateTournament() {
           <input 
             type="text" 
             required
-            className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500 transition-colors"
             onChange={(e) => setName(e.target.value)}
           />
         </div>
@@ -48,7 +48,7 @@ export default function CreateTournament() {
           <input 
             type="text" 
             required
-            className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500 transition-colors"
             onChange={(e) => setLocation(e.target.value)}
           />
         </div>

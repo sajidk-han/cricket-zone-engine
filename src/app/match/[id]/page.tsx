@@ -70,7 +70,7 @@ export default function ScoringDashboard() {
   if (!match) return <div className="p-10 text-gray-400 font-mono flex justify-center items-center min-h-screen bg-gray-950">Initializing Match Engine...</div>
 
   return (
-    <main className="min-h-screen bg-gray-950 p-6 font-sans text-white">
+    <main className="min-h-screen bg-gray-950 p-6 font-sans text-text-primary">
       <div className="max-w-4xl mx-auto">
         
         {/* Scoreboard Header */}
@@ -80,7 +80,7 @@ export default function ScoringDashboard() {
           <h1 className="text-2xl md:text-3xl font-bold text-gray-100 mb-4">
             {match.team1?.name} <span className="text-gray-600 mx-2">vs</span> {match.team2?.name}
           </h1>
-          <div className="text-7xl font-extrabold tracking-tighter my-6 text-white">
+          <div className="text-7xl font-extrabold tracking-tighter my-6 text-text-primary">
             0<span className="text-4xl text-gray-500 font-normal">/0</span>
           </div>
         </div>
@@ -89,21 +89,21 @@ export default function ScoringDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-gray-900 p-4 border border-gray-800 rounded-lg">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Current Striker</label>
-            <select value={striker} onChange={(e) => setStriker(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500">
+            <select value={striker} onChange={(e) => setStriker(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500">
               <option value="">-- Select Batsman --</option>
               {players.map(p => <option key={p.id} value={p.id}>{p.name} ({p.role.replace('_', ' ')})</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Non-Striker</label>
-            <select value={nonStriker} onChange={(e) => setNonStriker(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500">
+            <select value={nonStriker} onChange={(e) => setNonStriker(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500">
               <option value="">-- Select Batsman --</option>
               {players.map(p => <option key={p.id} value={p.id}>{p.name} ({p.role.replace('_', ' ')})</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Current Bowler</label>
-            <select value={bowler} onChange={(e) => setBowler(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500">
+            <select value={bowler} onChange={(e) => setBowler(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500">
               <option value="">-- Select Bowler --</option>
               {players.map(p => <option key={p.id} value={p.id}>{p.name} ({p.role.replace('_', ' ')})</option>)}
             </select>

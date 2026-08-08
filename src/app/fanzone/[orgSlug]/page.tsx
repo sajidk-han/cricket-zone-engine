@@ -1,0 +1,146 @@
+import React from 'react' // Force recompile for MatchCard
+import Link from 'next/link'
+import { getFeatureFlags } from '@/lib/feature-flags'
+import MatchCard from '@/features/match-engine/components/MatchCard'
+import { FeaturedTeamCard } from '@/features/fanzone/components/FeaturedTeamCard'
+import { JsonLd, generateSportsEventSchema } from '@/features/fanzone/components/JsonLd'
+import { ChevronRight, Activity, Calendar, Trophy, PlayCircle } from 'lucide-react'
+
+// Allow ISR revalidation for the home page (every 60s)
+export const revalidate = 60
+
+async function fetchFanzoneHome(orgSlug: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/fanzone/${orgSlug}/home`, {
+    next: { revalidate: 60 }
+  })
+  
+  if (!res.ok) {
+    return null
+  }
+  return res.json()
+}
+
+export default async function FanZoneHome({ params }: { params: Promise<{ orgSlug: string }> }) {
+  const { orgSlug } = await params
+  
+  const data = await fetchFanzoneHome(orgSlug)
+  const flags = await getFeatureFlags()
+
+  if (!data || !data.organization) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center bg-bg-surface border border-border-dim rounded-[var(--radius-2xl)] m-6 p-12">
+        <h1 className="text-3xl font-black text-text-primary mb-4 tracking-tighter">Organization Not Found</h1>
+        <p className="text-text-secondary">The requested FanZone does not exist.</p>
+        <Link href="/" className="mt-8 text-brand-primary font-bold hover:underline">Return to Home</Link>
+      </div>
+    )
+  }
+
+  const { organization: org, liveMatches, featuredTeams, recentResults } = data
+  const topMatch = liveMatches.length > 0 ? liveMatches[0] : null
+  const otherLive = liveMatches.slice(1)
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cricketzone.com'
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-700">
+      
+      {topMatch && (
+        <JsonLd data={generateSportsEventSchema(topMatch, `${appUrl}/fanzone/${orgSlug}`)} />
+      )}
+
+      {/* 1. HERO MATCH */}
+      {topMatch && (
+        <section>
+          <div className="flex items-center gap-2 mb-4 border-b border-border-dim pb-3">
+            <PlayCircle size={18} className="text-status-danger" />
+            <h2 className="text-lg font-bold text-text-primary uppercase tracking-wider">Featured Live Match</h2>
+          </div>
+          <Link href={`/fanzone/${orgSlug}/matches/${topMatch.id}`} className="block">
+            <MatchCard match={topMatch} isLive={true} variant="hero" />
+          </Link>
+        </section>
+      )}
+
+      {/* 2. OTHER LIVE MATCHES */}
+      {otherLive.length > 0 && (
+        <section>
+          <div className="flex items-center gap-2 mb-4 border-b border-border-dim pb-3">
+            <span className="w-2 h-2 rounded-full bg-status-danger animate-pulse" /> 
+            <h2 className="text-base font-bold text-text-primary uppercase tracking-wider">Other Live Matches</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {otherLive.map((match: any) => (
+              <Link key={match.id} href={`/fanzone/${orgSlug}/matches/${match.id}`} className="block">
+                <MatchCard match={match} isLive={true} variant="compact" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 3. RECENT RESULTS & UPCOMING */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <div className="flex justify-between items-center mb-4 border-b border-border-dim pb-3">
+            <h2 className="text-base font-bold text-text-primary flex items-center gap-2 uppercase tracking-wider">
+              <Activity size={16} className="text-brand-primary" /> Recent Results
+            </h2>
+            <Link href={`/fanzone/${orgSlug}/matches`} className="text-xs font-bold text-text-muted hover:text-text-primary transition-colors flex items-center gap-1">
+              View All <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {recentResults.length > 0 ? recentResults.slice(0, 3).map((match: any) => (
+              <Link key={match.id} href={`/fanzone/${orgSlug}/matches/${match.id}`} className="block h-28">
+                <MatchCard match={match} variant="horizontal" />
+              </Link>
+            )) : (
+              <div className="text-sm font-medium text-text-muted bg-bg-surface rounded-xl border border-dashed border-border-dim text-center flex flex-col items-center justify-center h-32 w-full">
+                <Activity className="w-6 h-6 text-border-strong mb-2" />
+                No recent results found
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-4 border-b border-border-dim pb-3">
+            <h2 className="text-base font-bold text-text-primary flex items-center gap-2 uppercase tracking-wider">
+              <Calendar size={16} className="text-brand-primary" /> Upcoming Fixtures
+            </h2>
+            <Link href={`/fanzone/${orgSlug}/matches`} className="text-xs font-bold text-text-muted hover:text-text-primary transition-colors flex items-center gap-1">
+              View All <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="space-y-3">
+             <div className="text-sm font-medium text-text-muted bg-bg-surface rounded-xl border border-dashed border-border-dim text-center flex flex-col items-center justify-center h-32 w-full">
+                <Calendar className="w-6 h-6 text-border-strong mb-2" />
+                Upcoming fixtures will appear here
+             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FEATURED TEAMS */}
+      {featuredTeams && featuredTeams.length > 0 && (
+        <section>
+          <div className="flex justify-between items-center mb-4 border-b border-border-dim pb-3">
+            <h2 className="text-base font-bold text-text-primary flex items-center gap-2 uppercase tracking-wider">
+              <Trophy size={16} className="text-brand-primary" /> Featured Teams
+            </h2>
+            <Link href={`/fanzone/${orgSlug}/organizations`} className="text-xs font-bold text-text-muted hover:text-text-primary transition-colors flex items-center gap-1">
+              All Teams <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {featuredTeams.map((team: any) => (
+              <FeaturedTeamCard key={team.id} team={team} orgSlug={orgSlug} />
+            ))}
+          </div>
+        </section>
+      )}
+      
+    </div>
+  )
+}

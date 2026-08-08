@@ -44,7 +44,7 @@ export default function TournamentDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 p-10 font-sans text-white">
+    <main className="min-h-screen bg-gray-950 p-10 font-sans text-text-primary">
       <h1 className="text-3xl font-bold mb-8 text-blue-500 border-b border-gray-800 pb-4">
         Tournament Dashboard
       </h1>
@@ -58,7 +58,7 @@ export default function TournamentDashboard() {
               <label className="block text-sm text-gray-400 mb-1">Team Name</label>
               <input 
                 type="text" required value={teamName}
-                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500"
                 onChange={(e) => setTeamName(e.target.value)}
               />
             </div>
@@ -66,7 +66,7 @@ export default function TournamentDashboard() {
               <label className="block text-sm text-gray-400 mb-1">City / Region</label>
               <input 
                 type="text" required value={city}
-                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-700 rounded p-2 text-text-primary outline-none focus:border-blue-500"
                 onChange={(e) => setCity(e.target.value)}
               />
             </div>

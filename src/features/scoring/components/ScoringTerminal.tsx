@@ -113,9 +113,19 @@ export function ScoringTerminal({ matchId }: { matchId: string }) {
 
         {/* Right: Input Terminal */}
         <div className="w-full lg:w-96 bg-bg-surface p-6 flex flex-col gap-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider">Scoring Input</h3>
-            <Zap size={16} className="text-brand-primary" />
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 text-xs text-orange-400 border-orange-400/20 hover:bg-orange-400/10"
+                onClick={() => console.log("Undo last ball clicked")}
+              >
+                <RefreshCw size={12} className="mr-1.5" /> Undo Last
+              </Button>
+              <Zap size={16} className="text-green-400" />
+            </div>
           </div>
           
           <div className="grid grid-cols-3 gap-3">

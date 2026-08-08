@@ -1,47 +1,78 @@
 @import "tailwindcss";
 
 /* 
-  Premium Cricket Zone Design Tokens
-  Adhering to 8px spacing, specific brand colors, and constrained UI rules. 
+  Cricket Zone Enterprise Design Tokens
+  Timeless, structural, accessible.
 */
 
 :root {
   /* Light Theme Variables */
   --bg-base: #ffffff;
-  --bg-surface: #f4f4f5; /* Zinc 100 */
-  --bg-elevated: #e4e4e7; /* Zinc 200 */
+  --bg-surface: #f4f4f5; 
+  --bg-elevated: #e4e4e7;
   
-  --text-primary: #09090b; /* Zinc 950 */
-  --text-secondary: #52525b; /* Zinc 600 */
-  --text-muted: #a1a1aa; /* Zinc 400 */
+  --text-primary: #09090b; 
+  --text-secondary: #52525b; 
+  --text-muted: #a1a1aa; 
+
+  --border-dim: #e4e4e7;
+  --border-strong: #d4d4d8;
   
-  --brand-primary: #2563eb;
-  --brand-secondary: #7c3aed;
-  --brand-accent: #10b981;
+  --brand-primary: #15803d; /* Green 700 - Normal dark green for better contrast */
+  --brand-secondary: #16a34a; /* Green 600 */
+  
+  /* Semantic Status Colors */
+  --status-danger: #ef4444; /* Live */
+  --status-success: #10b981; /* Completed */
+  --status-warning: #f59e0b; /* Abandoned */
+  --status-orange: #f97316; /* Delayed */
+  --status-neutral: #71717a; /* Cancelled */
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 .dark {
-  /* Dark Theme Variables */
-  --bg-base: #09090b;
-  --bg-surface: #18181b;
-  --bg-elevated: #27272a;
+  /* Dark Theme Variables - Horizon UI Premium Style */
+  --bg-base: #050814; /* Much Darker Navy Background */
+  --bg-surface: #111c44; /* Dark Blue Surface */
+  --bg-elevated: #1b2559; /* Elevated Dark Blue */
   
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-muted: #52525b;
+  --text-primary: #ffffff; /* True White */
+  --text-secondary: #a3aed1; /* Bluish Gray */
+  --text-muted: #8f9bba; /* Muted Bluish Gray */
 
-  --brand-primary: #3b82f6; /* slightly lighter for dark mode */
-  --brand-secondary: #8b5cf6;
-  --brand-accent: #34d399;
+  --border-dim: #1b2559; /* Subtle Navy Border */
+  --border-strong: #2b3674; /* Stronger Navy Border */
+
+  --brand-primary: #10b981; /* Emerald 500 / Light Green Accent */
+  --brand-secondary: #34d399; /* Emerald 400 / Lighter Green Accent */
+  
+  /* Semantic Status Colors */
+  --status-danger: #ee5d50; /* Horizon Red */
+  --status-success: #01b574; /* Horizon Green */
+  --status-warning: #ffce20; /* Horizon Yellow */
+  --status-orange: #ff8f20; 
+  --status-neutral: #a3aed1; 
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @theme {
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
   
-  /* Color Palette mapped to CSS variables */
+  /* Colors */
   --color-brand-primary: var(--brand-primary);
   --color-brand-secondary: var(--brand-secondary);
-  --color-brand-accent: var(--brand-accent);
   
   --color-bg-base: var(--bg-base);
   --color-bg-surface: var(--bg-surface);
@@ -51,23 +82,45 @@
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
 
-  /* Shadows (Enterprise constraints) */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --color-border-dim: var(--border-dim);
+  --color-border-strong: var(--border-strong);
+
+  --color-status-danger: var(--status-danger);
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-orange: var(--status-orange);
+  --color-status-neutral: var(--status-neutral);
+
+  /* Shadows */
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
   
   /* Radii */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
 
-  /* Animation & Transition Timings */
-  --animate-hover: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --animate-drawer: 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  --animate-page: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Spacing */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+
+  /* Z-Index */
+  --z-dropdown: 40;
+  --z-navbar: 50;
+  --z-modal: 100;
+  --z-toast: 999;
 }
 
+/* Base resets */
 body {
   background: var(--bg-base);
   color: var(--text-primary);
@@ -76,7 +129,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Base resets for a cleaner UI */
 * {
-  border-color: var(--bg-elevated);
+  border-color: var(--border-dim);
+}
+
+/* Motion Tokens as Utility Classes (Better for React composition) */
+.transition-fast { transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); }
+.transition-normal { transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1); }
+.transition-slow { transition: all 400ms cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

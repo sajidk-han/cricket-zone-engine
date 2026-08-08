@@ -86,7 +86,7 @@ export default function MatchCenter() {
                   <div className="text-text-secondary text-xs">
                     Toss: <span className="text-text-primary font-medium">{m.toss_decision}</span>
                   </div>
-                  <Link href={`/matches/${m.id}/score`}>
+                  <Link href={`/matches/${m.id}/overview`}>
                     <Button size="sm" variant="primary" className="gap-2">
                       <PlayCircle size={14} /> Open Scoring
                     </Button>

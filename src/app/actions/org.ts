@@ -1,29 +1,41 @@
 "use server"
 
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-server'
 
 export async function getDefaultOrgId() {
-  // First try to fetch the first organization
-  const { data: orgs } = await supabase.from('organizations').select('id').limit(1)
+  const supabase = await createClient()
   
-  if (orgs && orgs.length > 0) {
-    return orgs[0].id
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    throw new Error('Not authenticated')
   }
 
-  // If no org exists, create one
-  const { data: newOrg, error } = await supabase
-    .from('organizations')
-    .insert([{ 
-      name: 'Default Organization',
-      slug: 'default-org'
-    }])
+  // Get public user record
+  const { data: userData } = await supabase
+    .from('users')
     .select('id')
+    .eq('auth_id', user.id)
     .single()
-
-  if (error) {
-    console.error('Failed to create default org:', error)
-    throw new Error('Failed to create default organization')
+    
+  if (!userData) {
+    throw new Error('User profile not found')
   }
 
-  return newOrg.id
+  // Get first organization membership
+  const { data: membership } = await supabase
+    .from('organization_members')
+    .select('org_id')
+    .eq('user_id', userData.id)
+    .limit(1)
+    .maybeSingle()
+    
+  if (membership) {
+    return membership.org_id
+  }
+
+  // Fallback to finding any organization if no membership exists (edge case)
+  const { data: fallbackOrg } = await supabase.from('organizations').select('id').limit(1).maybeSingle()
+  if (fallbackOrg) return fallbackOrg.id
+  
+  throw new Error('Failed to find an organization. Please register one.')
 }

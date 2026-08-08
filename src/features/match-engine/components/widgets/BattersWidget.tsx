@@ -1,0 +1,64 @@
+import React from 'react'
+import { Card, CardContent } from '@/shared/components/ui/Card'
+import { Activity, RefreshCw } from 'lucide-react'
+
+type BatterStats = {
+  id: string;
+  name: string;
+  runs: number;
+  balls: number;
+  fours: number;
+  sixes: number;
+  isStriker: boolean;
+}
+
+export const BattersWidget = React.memo(function BattersWidget({ striker, nonStriker, onChangeBatter }: { striker: BatterStats | null, nonStriker: BatterStats | null, onChangeBatter?: () => void }) {
+  return (
+    <Card className="bg-bg-surface border-bg-elevated overflow-hidden">
+      <div className="bg-bg-elevated/50 px-4 py-2 border-b border-white/5 flex items-center justify-between">
+         <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest flex items-center gap-2">
+            <Activity size={12} className="text-brand-primary" /> Batters
+         </span>
+         {onChangeBatter && (
+           <button 
+             onClick={onChangeBatter}
+             className="text-[10px] font-bold text-brand-primary uppercase tracking-widest bg-brand-primary/20 hover:bg-brand-primary/40 border border-brand-primary/50 transition-colors px-3 py-1 rounded-full flex items-center gap-1.5"
+           >
+             <RefreshCw size={10} />
+             Change
+           </button>
+         )}
+      </div>
+      <CardContent className="p-0">
+        <div className="flex flex-col">
+          {striker && <BatterRow batter={striker} />}
+          {nonStriker && <BatterRow batter={nonStriker} />}
+        </div>
+      </CardContent>
+    </Card>
+  )
+})
+
+function BatterRow({ batter }: { batter: BatterStats }) {
+  const sr = batter.balls > 0 ? ((batter.runs / batter.balls) * 100).toFixed(1) : '0.0';
+  return (
+    <div className={`flex items-center justify-between p-4 border-b border-border-dim last:border-0 ${batter.isStriker ? 'bg-brand-primary/5' : ''}`}>
+      <div className="flex items-center gap-3">
+        {batter.isStriker && <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse shadow-[0_0_8px_var(--brand-primary)]" />}
+        {!batter.isStriker && <div className="w-1.5 h-1.5 rounded-full bg-transparent" />}
+        <span className={`font-bold ${batter.isStriker ? 'text-text-primary' : 'text-text-secondary'}`}>{batter.name}</span>
+      </div>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6 ml-auto">
+        <div className="text-right">
+          <span className="text-base sm:text-lg font-black text-text-primary">{batter.runs}</span>
+          <span className="text-[10px] sm:text-xs text-text-secondary ml-1">({batter.balls})</span>
+        </div>
+        <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-text-secondary justify-end">
+          <span className="w-12 sm:w-12 text-right">SR {sr}</span>
+          <span className="w-8 sm:w-8 text-right">4s {batter.fours}</span>
+          <span className="w-8 sm:w-8 text-right">6s {batter.sixes}</span>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -24,7 +24,7 @@ export default function NewTeamPage() {
     <div className="max-w-2xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href="/teams" className="text-text-secondary hover:text-white transition-colors">
+        <Link href="/teams" className="text-text-secondary hover:text-text-primary transition-colors">
           &larr; Back
         </Link>
         <h1 className="text-3xl font-bold text-text-primary tracking-tight">Register Team</h1>

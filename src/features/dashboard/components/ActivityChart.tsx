@@ -12,17 +12,11 @@ import {
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card'
 
-const data = [
-  { name: 'Mon', matches: 2, players: 14 },
-  { name: 'Tue', matches: 4, players: 28 },
-  { name: 'Wed', matches: 3, players: 21 },
-  { name: 'Thu', matches: 7, players: 50 },
-  { name: 'Fri', matches: 5, players: 35 },
-  { name: 'Sat', matches: 12, players: 84 },
-  { name: 'Sun', matches: 15, players: 105 },
-]
+interface ActivityChartProps {
+  data?: { name: string; matches: number; players: number }[];
+}
 
-export function ActivityChart() {
+export function ActivityChart({ data = [] }: ActivityChartProps) {
   return (
     <Card className="col-span-full xl:col-span-2">
       <CardHeader>

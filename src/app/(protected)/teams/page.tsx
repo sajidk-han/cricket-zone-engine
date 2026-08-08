@@ -37,7 +37,7 @@ export default async function TeamsList() {
                   
                   <div className="mt-6 w-full pt-4 border-t border-bg-elevated flex justify-between items-center text-sm">
                     <span className="text-text-secondary">Roster</span>
-                    <span className="font-bold text-white">0</span> {/* Requires relation fetch in future */}
+                    <span className="font-bold text-text-primary">0</span> {/* Requires relation fetch in future */}
                   </div>
                 </CardContent>
               </Card>

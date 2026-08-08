@@ -56,8 +56,11 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Protect routes that are NOT login or public
-  const isPublicRoute = request.nextUrl.pathname === '/login' || request.nextUrl.pathname.startsWith('/public')
+  // Protect routes that are NOT login, register, public, or home
+  const isPublicRoute = request.nextUrl.pathname === '/login' || 
+                        request.nextUrl.pathname === '/register' || 
+                        request.nextUrl.pathname === '/' ||
+                        request.nextUrl.pathname.startsWith('/public')
   const isApiRoute = request.nextUrl.pathname.startsWith('/api') || request.nextUrl.pathname.startsWith('/_next')
 
   if (!isPublicRoute && !isApiRoute && !user) {

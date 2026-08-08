@@ -59,7 +59,7 @@ export default function MatchSetup() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-950 p-10 font-sans text-white flex flex-col items-center">
+    <main className="min-h-screen bg-gray-950 p-10 font-sans text-text-primary flex flex-col items-center">
       <h1 className="text-3xl font-bold mb-8 text-blue-500 border-b border-gray-800 pb-4 w-full max-w-2xl text-center">
         Initialize New Match
       </h1>
@@ -77,14 +77,14 @@ export default function MatchSetup() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block text-sm text-gray-400 mb-2">Select Team A</label>
-              <select required value={team1} onChange={(e) => setTeam1(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white outline-none focus:border-blue-500">
+              <select required value={team1} onChange={(e) => setTeam1(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-text-primary outline-none focus:border-blue-500">
                 <option value="">-- Select Team --</option>
                 {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-2">Select Team B</label>
-              <select required value={team2} onChange={(e) => setTeam2(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white outline-none focus:border-blue-500">
+              <select required value={team2} onChange={(e) => setTeam2(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-text-primary outline-none focus:border-blue-500">
                 <option value="">-- Select Team --</option>
                 {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
@@ -96,7 +96,7 @@ export default function MatchSetup() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm text-gray-400 mb-2">Toss Winner</label>
-                <select value={tossWinner} onChange={(e) => setTossWinner(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white outline-none focus:border-blue-500">
+                <select value={tossWinner} onChange={(e) => setTossWinner(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-text-primary outline-none focus:border-blue-500">
                   <option value="">-- Select Winner --</option>
                   {team1 && <option value={team1}>{teams.find(t => t.id === team1)?.name || 'Team A'}</option>}
                   {team2 && <option value={team2}>{teams.find(t => t.id === team2)?.name || 'Team B'}</option>}
@@ -104,7 +104,7 @@ export default function MatchSetup() {
               </div>
               <div>
                 <label className="block text-sm text-gray-400 mb-2">Elected To</label>
-                <select value={tossDecision} onChange={(e) => setTossDecision(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white outline-none focus:border-blue-500">
+                <select value={tossDecision} onChange={(e) => setTossDecision(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-text-primary outline-none focus:border-blue-500">
                   <option value="bat">Bat First</option>
                   <option value="bowl">Bowl First</option>
                 </select>

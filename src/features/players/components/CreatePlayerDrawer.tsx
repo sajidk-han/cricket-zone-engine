@@ -6,6 +6,7 @@ import { Button } from '@/shared/components/ui/Button'
 import { Drawer } from '@/shared/components/ui/Drawer'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { createPlayer } from '@/app/actions/players'
 
 export function CreatePlayerDrawer({ 
   trigger,
@@ -31,12 +32,16 @@ export function CreatePlayerDrawer({
     setIsSubmitting(true)
     
     try {
-      // Mock API call for now (until players table logic is fully wired)
-      await new Promise(resolve => setTimeout(resolve, 800))
+      const formData = new FormData(e.currentTarget)
+      const res = await createPlayer(formData)
       
-      toast.success('Player registered successfully!')
-      setIsOpen(false)
-      router.refresh()
+      if (res.success) {
+        toast.success(res.message)
+        setIsOpen(false)
+        router.refresh()
+      } else {
+        toast.error(res.message)
+      }
     } catch (error) {
       toast.error('Failed to register player')
     } finally {
@@ -62,18 +67,38 @@ export function CreatePlayerDrawer({
         size="md"
       >
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-blue-900/20 border border-blue-500/30 text-blue-400 p-3 rounded-lg text-xs leading-relaxed">
+            <strong>Note:</strong> Players registered here are added to your <strong>Global Player Pool</strong>. You can assign them to specific teams from the Team Dashboard.
+          </div>
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">
                 Full Name <span className="text-red-500">*</span>
               </label>
               <input 
-                name="name" 
+                name="fullName" 
                 type="text" 
                 required
                 placeholder="e.g. Babar Azam"
                 className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Player Role <span className="text-red-500">*</span>
+              </label>
+              <select 
+                name="role" 
+                required
+                className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary"
+              >
+                <option value="batsman">Batsman</option>
+                <option value="bowler">Bowler</option>
+                <option value="allrounder">All-rounder</option>
+                <option value="wicketkeeper">Wicket Keeper</option>
+              </select>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
@@ -108,13 +133,15 @@ export function CreatePlayerDrawer({
 
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">
-                Date of Birth
+                Age
               </label>
               <input 
-                name="dob" 
-                type="date"
+                name="age" 
+                type="number"
+                min="10"
+                max="80"
+                placeholder="e.g. 24"
                 className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary"
-                style={{ colorScheme: 'dark' }}
               />
             </div>
           </div>

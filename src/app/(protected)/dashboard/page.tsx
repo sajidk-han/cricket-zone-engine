@@ -36,7 +36,7 @@ export default async function DashboardPage() {
         />
         <SummaryCard 
           title="Live Matches" 
-          value={0} 
+          value={stats.liveMatches} 
           icon={<PlayCircle className="text-red-500" />} 
           trend={<span className="text-text-muted">No active streams</span>} 
         />
@@ -58,7 +58,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         
         {/* Recharts Activity Graph */}
-        <ActivityChart />
+        <ActivityChart data={stats.activityChartData} />
 
         {/* Quick Actions & Recent Activity */}
         <div className="space-y-6">
