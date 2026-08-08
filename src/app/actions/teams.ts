@@ -97,9 +97,8 @@ export async function uploadTeamLogo(formData: FormData) {
 
   const urlWithBuster = `${publicUrl}?t=${Date.now()}`
 
-  // Update team record
-  const supabase = await createClient()
-  const { error: updateError } = await supabase
+  // Update team record using admin client to guarantee bypass of any RLS issues
+  const { error: updateError } = await adminSupabase
     .from('teams')
     .update({ logo_url: urlWithBuster })
     .eq('id', teamId)

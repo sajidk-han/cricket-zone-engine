@@ -7,10 +7,13 @@ import { toast } from 'react-hot-toast'
 import { updateTeam, updateTeamLogo, uploadTeamLogo } from '@/app/actions/teams'
 import { ImageUpload, ImageUploadHandle } from '@/shared/components/ui/ImageUpload'
 
+import { useRouter } from 'next/navigation'
+
 export function EditTeamModal({ team }: { team: any }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const uploadRef = React.useRef<ImageUploadHandle>(null)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -30,13 +33,15 @@ export function EditTeamModal({ team }: { team: any }) {
             )
           } catch (uploadError: any) {
             toast.error("Team updated, but logo upload failed: " + uploadError.message)
+            setIsSubmitting(false)
+            return // Stop execution if upload fails
           }
         }
         
         toast.success(res.message)
         setIsOpen(false)
-        // Reload to show new logo from server
-        window.location.reload()
+        // Refresh to show new logo from server without hard reload race conditions
+        router.refresh()
       } else {
         toast.error(res.message)
       }
