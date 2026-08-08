@@ -1,12 +1,9 @@
+"use client"
+
 import React from 'react'
 import Link from 'next/link'
 import { LogoIcon } from '@/shared/components/LogoIcon'
 import { Search, Trophy, ArrowRight } from 'lucide-react'
-
-export const metadata = {
-  title: 'Fan Zone Hub | CricketZone',
-  description: 'Find and follow your favorite cricket tournaments and organizations live on CricketZone.'
-}
 
 export default function FanZoneHubPage() {
   return (
