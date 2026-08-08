@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { revalidatePath } from 'next/cache'
 
 import { getDefaultOrgId } from '@/app/actions/org'
@@ -55,6 +56,62 @@ export async function updateTeamLogo(teamId: string, logoUrl: string) {
   revalidatePath('/teams')
   revalidatePath(`/teams/${teamId}`)
   return data
+}
+
+export async function uploadTeamLogo(formData: FormData) {
+  const teamId = formData.get('teamId') as string
+  const orgId = formData.get('orgId') as string
+  const file = formData.get('file') as File
+  
+  if (!teamId || !orgId || !file) {
+    throw new Error('Missing required fields for logo upload')
+  }
+
+  const adminSupabase = createAdminClient()
+  const storagePath = `${orgId}/${teamId}/logo.webp`
+
+  // Convert File to ArrayBuffer for server upload
+  const arrayBuffer = await file.arrayBuffer()
+  const buffer = Buffer.from(arrayBuffer)
+
+  // Upload using admin client (bypasses RLS)
+  const { data: uploadData, error: uploadError } = await adminSupabase
+    .storage
+    .from('team-logos')
+    .upload(storagePath, buffer, {
+      cacheControl: '3600',
+      upsert: true,
+      contentType: 'image/webp'
+    })
+
+  if (uploadError) {
+    console.error('Upload error:', uploadError)
+    throw new Error(uploadError.message)
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = adminSupabase
+    .storage
+    .from('team-logos')
+    .getPublicUrl(storagePath)
+
+  const urlWithBuster = `${publicUrl}?t=${Date.now()}`
+
+  // Update team record
+  const supabase = await createClient()
+  const { error: updateError } = await supabase
+    .from('teams')
+    .update({ logo_url: urlWithBuster })
+    .eq('id', teamId)
+
+  if (updateError) {
+    console.error('Update team logo_url error:', updateError)
+    throw new Error(updateError.message)
+  }
+
+  revalidatePath('/teams')
+  revalidatePath(`/teams/${teamId}`)
+  return { success: true, publicUrl: urlWithBuster }
 }
 
 export async function fetchTeams() {

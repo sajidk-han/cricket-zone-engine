@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { UploadCloud, Image as ImageIcon, X, Loader2, AlertCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
 
 export interface ImageUploadHandle {
   upload: (dynamicFolderPath?: string, dynamicFileName?: string) => Promise<string | null>;
@@ -14,6 +13,7 @@ export type ImageUploadProps = {
   folderPath?: string // Optional if using manual trigger
   fileName?: string // e.g. `logo.webp`
   autoUpload?: boolean // Defaults to false
+  serverUploadAction?: (formData: FormData) => Promise<{ success: boolean; publicUrl: string }>
   onUploadSuccess?: (publicUrl: string) => void
   onUploadError?: (error: string) => void
   onRemove?: () => void
@@ -26,6 +26,7 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
   folderPath, 
   fileName = 'logo.webp',
   autoUpload = false,
+  serverUploadAction,
   onUploadSuccess, 
   onUploadError,
   onRemove,
@@ -107,29 +108,25 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
       const activeName = name || fileName
       if (!activePath) throw new Error("Folder path is required for upload")
 
-      const fullPath = `${activePath}/${activeName}`
-      
-      const { data, error: uploadError } = await supabase
-        .storage
-        .from(bucketName)
-        .upload(fullPath, blob, {
-          cacheControl: '3600',
-          upsert: true,
-          contentType: 'image/webp'
-        })
+      if (serverUploadAction) {
+        // Use server action for upload (secure, uses service role key)
+        const parts = activePath.split('/')
+        const orgId = parts[0]
+        const teamId = parts[1]
+        
+        const uploadFormData = new FormData()
+        uploadFormData.append('orgId', orgId)
+        uploadFormData.append('teamId', teamId)
+        uploadFormData.append('file', blob, activeName)
+        
+        const result = await serverUploadAction(uploadFormData)
+        
+        setIsUploading(false)
+        if (onUploadSuccess) onUploadSuccess(result.publicUrl)
+        return result.publicUrl
+      }
 
-      if (uploadError) throw uploadError
-
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from(bucketName)
-        .getPublicUrl(fullPath)
-
-      const urlWithBuster = `${publicUrl}?t=${Date.now()}`
-      
-      setIsUploading(false)
-      if (onUploadSuccess) onUploadSuccess(urlWithBuster)
-      return urlWithBuster
+      throw new Error('No upload action configured')
 
     } catch (err: any) {
       setIsUploading(false)

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Button } from '@/shared/components/ui/Button'
 import { X } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { updateTeam, updateTeamLogo } from '@/app/actions/teams'
+import { updateTeam, updateTeamLogo, uploadTeamLogo } from '@/app/actions/teams'
 import { ImageUpload, ImageUploadHandle } from '@/shared/components/ui/ImageUpload'
 
 export function EditTeamModal({ team }: { team: any }) {
@@ -24,13 +24,10 @@ export function EditTeamModal({ team }: { team: any }) {
         // Now handle image upload if a new file was selected
         if (uploadRef.current?.hasFile()) {
           try {
-            const publicUrl = await uploadRef.current.upload(
+            await uploadRef.current.upload(
               `${team.org_id}/${team.id}`, 
               'logo.webp'
             )
-            if (publicUrl) {
-              await updateTeamLogo(team.id, publicUrl)
-            }
           } catch (uploadError: any) {
             toast.error("Team updated, but logo upload failed: " + uploadError.message)
           }
@@ -107,6 +104,7 @@ export function EditTeamModal({ team }: { team: any }) {
                     bucketName="team-logos"
                     autoUpload={false}
                     currentImageUrl={team.logo_url}
+                    serverUploadAction={uploadTeamLogo}
                   />
                 </div>
 

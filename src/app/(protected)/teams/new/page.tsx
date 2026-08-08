@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { Input } from '@/shared/components/ui/Input'
 import { Button } from '@/shared/components/ui/Button'
 import Link from 'next/link'
-import { createTeam, updateTeamLogo } from '@/app/actions/teams'
+import { createTeam, uploadTeamLogo } from '@/app/actions/teams'
 import { useFormStatus } from 'react-dom'
 import { ImageUpload, ImageUploadHandle } from '@/shared/components/ui/ImageUpload'
 import { toast } from 'react-hot-toast'
@@ -33,13 +33,10 @@ export default function NewTeamPage() {
       // 2. Upload Logo if a file was selected
       if (uploadRef.current?.hasFile()) {
         try {
-          const publicUrl = await uploadRef.current.upload(
+          await uploadRef.current.upload(
             `${team.org_id}/${team.id}`, 
             'logo.webp'
           )
-          if (publicUrl) {
-            await updateTeamLogo(team.id, publicUrl)
-          }
         } catch (uploadError: any) {
           toast.error("Team created, but logo upload failed: " + uploadError.message)
         }
@@ -98,7 +95,8 @@ export default function NewTeamPage() {
               <ImageUpload 
                 ref={uploadRef}
                 bucketName="team-logos"
-                autoUpload={false} // Defer upload until form submit
+                autoUpload={false}
+                serverUploadAction={uploadTeamLogo}
               />
             </div>
 
