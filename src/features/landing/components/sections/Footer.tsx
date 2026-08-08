@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 import { Button } from '@/shared/components/ui/Button'
 import { ArrowRight, Activity } from 'lucide-react'
 
@@ -10,8 +11,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-16">
           
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-6 group inline-flex">
-              <span className="text-2xl group-hover:scale-110 transition-transform">🏏</span>
+            <Link href="/" className="flex items-center gap-2 group">
+              <LogoIcon size={32} className="group-hover:scale-110 transition-transform" />
               <span className="text-xl font-black text-white tracking-tighter">CricketZone</span>
             </Link>
             <p className="text-sm text-[#8f9bba] mb-8 leading-relaxed max-w-sm">

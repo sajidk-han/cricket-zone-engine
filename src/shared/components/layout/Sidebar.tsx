@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { logout } from '@/app/actions/auth'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 import { Trophy, LayoutDashboard, Shield, User, PlayCircle, Settings, ArrowLeft, Activity, List, Users, Globe, ShieldAlert } from 'lucide-react'
 
 export function Sidebar() {
@@ -48,7 +49,7 @@ export function Sidebar() {
       <div className="p-6 border-b border-bg-elevated h-16 flex items-center">
         {!isTournamentWorkspace ? (
           <Link href="/dashboard" className="flex items-center gap-2">
-            <span className="text-2xl">🏏</span>
+            <LogoIcon size={32} />
             <span className="text-xl font-black text-green-400 tracking-tighter">CricketZone</span>
           </Link>
         ) : (

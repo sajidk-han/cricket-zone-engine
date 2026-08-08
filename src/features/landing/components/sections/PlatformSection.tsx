@@ -1,5 +1,6 @@
 import React from 'react'
-import { Smartphone, Download, CheckCircle2 } from 'lucide-react'
+import { Smartphone, CheckCircle2 } from 'lucide-react'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 
 export function PlatformSection() {
   return (
@@ -16,8 +17,8 @@ export function PlatformSection() {
                   <div className="w-32 h-6 bg-[#1b2559] rounded-b-xl"></div>
                 </div>
                 <div className="flex-1 bg-gradient-to-b from-[#09090b] to-[#121215] flex flex-col items-center justify-center p-6 text-center">
-                  <div className="w-20 h-20 bg-brand-primary rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-xl shadow-brand-primary/30">
-                    🏏
+                  <div className="w-12 h-12 bg-white rounded-xl mb-4 flex items-center justify-center shadow-sm">
+                    <LogoIcon size={24} />
                   </div>
                   <h3 className="text-xl font-black text-white mb-2">CricketZone</h3>
                   <p className="text-xs text-[#8f9bba] mb-8">Official Fan Zone & Scorer App</p>

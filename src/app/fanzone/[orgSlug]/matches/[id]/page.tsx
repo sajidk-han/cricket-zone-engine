@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import { ArrowLeft } from 'lucide-react'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 import { LiveStreamPlayer } from '@/features/match-engine/components/widgets/LiveStreamPlayer'
 import { MatchStatus } from '@/shared/components/ui/StatusBadge'
 import { BroadcastScoreStrip } from '@/features/match-engine/components/public/BroadcastScoreStrip'
@@ -233,7 +234,7 @@ export default function FanZoneMatchPage() {
   }, [matchStats, ballEvents, playersMap])
 
   if (loading) {
-    return <div className="min-h-screen bg-bg-base flex items-center justify-center"><div className="animate-spin text-brand-primary text-4xl">🏏</div></div>
+    return <div className="min-h-screen bg-bg-base flex items-center justify-center"><div className="animate-spin text-brand-primary flex items-center justify-center"><LogoIcon size={48} /></div></div>
   }
 
   if (!matchData) {

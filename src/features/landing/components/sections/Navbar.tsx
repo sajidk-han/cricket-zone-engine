@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/shared/components/ui/Button'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 import { Menu, X } from 'lucide-react'
 
 export function LandingNavbar() {
@@ -23,7 +24,7 @@ export function LandingNavbar() {
         
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <span className="text-3xl transition-transform group-hover:scale-110 duration-300">🏏</span>
+          <LogoIcon size={36} className="transition-transform group-hover:scale-110 duration-300" />
           <span className="text-2xl font-black text-white tracking-tighter">CricketZone</span>
         </Link>
 

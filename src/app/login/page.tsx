@@ -6,6 +6,7 @@ import { Input } from '@/shared/components/ui/Input'
 import { Button } from '@/shared/components/ui/Button'
 import { login } from '@/app/actions/auth'
 import { useRouter } from 'next/navigation'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -43,8 +44,8 @@ export default function LoginPage() {
       <Card className="w-full max-w-md z-10 border-bg-elevated/50 bg-bg-surface/80 backdrop-blur-xl">
         <CardContent className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-brand-primary tracking-tighter mb-2 flex justify-center items-center gap-2">
-              <span className="text-4xl">🏏</span> CricketZone
+            <h1 className="text-3xl font-black text-brand-primary tracking-tighter flex items-center gap-3 justify-center">
+              <LogoIcon size={40} /> CricketZone
             </h1>
             <p className="text-text-secondary text-sm">Enterprise Scoring Engine</p>
           </div>

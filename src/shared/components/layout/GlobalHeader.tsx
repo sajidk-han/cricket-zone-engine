@@ -6,6 +6,7 @@ import { Search, Plus, Bell, Moon, Sun, User, Settings, LogOut, Command } from '
 import { useTheme } from 'next-themes'
 import { Button } from '../ui/Button'
 import { logout } from '@/app/actions/auth'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 
 import { CreatePlayerDrawer } from '@/features/players/components/CreatePlayerDrawer'
 import { InviteUserDrawer } from '@/features/organizations/components/InviteUserDrawer'
@@ -29,7 +30,7 @@ export function GlobalHeader() {
       {/* LEFT: Logo & Org Switcher */}
       <div className="flex items-center gap-6">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <span className="text-2xl">🏏</span>
+          <LogoIcon size={32} />
           <span className="text-xl font-black text-green-400 tracking-tighter hidden md:block">CricketZone</span>
         </Link>
         

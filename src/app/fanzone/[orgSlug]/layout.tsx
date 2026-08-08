@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Search, Bell, Sun, User, Menu, Home, PlayCircle, Calendar, Trophy, BarChart3, Users } from 'lucide-react'
 import { GlobalSearchOverlay } from '@/features/fanzone/components/GlobalSearchOverlay'
 import { TopNavActions } from '@/features/fanzone/components/TopNavActions'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 
 export const metadata = {
   title: 'Fan Zone | CricketZone',
@@ -31,8 +32,8 @@ export default async function FanZoneLayout({
           <button className="md:hidden text-text-secondary hover:text-text-primary transition-colors">
             <Menu size={24} />
           </button>
-          <Link href={basePath} className="flex items-center gap-2 group">
-            <span className="text-2xl transition-transform group-hover:scale-110">🏏</span>
+          <Link href={basePath} className="flex items-center gap-3 group">
+            <LogoIcon size={32} className="transition-transform group-hover:scale-110" />
             <span className="font-black text-text-primary tracking-tight hidden sm:block">Fan Zone</span>
           </Link>
         </div>

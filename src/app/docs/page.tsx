@@ -1,6 +1,7 @@
 "use client"
 import React from 'react'
 import Link from 'next/link'
+import { LogoIcon } from '@/shared/components/LogoIcon'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/shared/components/ui/Button'
@@ -15,7 +16,7 @@ export default function DocsComingSoon() {
       <header className="absolute top-0 w-full z-50 bg-[#111c44]/80 backdrop-blur-lg border-b border-[#1b2559] py-4">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <span className="text-3xl transition-transform group-hover:scale-110 duration-300">🏏</span>
+            <LogoIcon size={32} className="transition-transform group-hover:scale-110 duration-300" />
             <span className="text-2xl font-black text-white tracking-tighter">CricketZone</span>
           </Link>
           <Link href="/">
