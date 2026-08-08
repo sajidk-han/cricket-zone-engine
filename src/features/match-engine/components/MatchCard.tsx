@@ -1,8 +1,51 @@
 'use client' // Force JIT recompile
 
-import React, { useState } from 'react' // Force HMR reload
-import { MapPin, CalendarDays, Trophy } from 'lucide-react'
+import React, { useState, useEffect } from 'react' // Force HMR reload
+import { MapPin, CalendarDays, Trophy, Clock } from 'lucide-react'
 import { StatusBadge, MatchStatus } from '@/shared/components/ui/StatusBadge'
+
+function CountdownTimer({ targetDate }: { targetDate: Date }) {
+  const [timeLeft, setTimeLeft] = useState<{d: number, h: number, m: number, s: number} | null>(null)
+
+  useEffect(() => {
+    const calc = () => {
+      const diff = targetDate.getTime() - Date.now()
+      if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0 }
+      return {
+        d: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        h: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        m: Math.floor((diff / 1000 / 60) % 60),
+        s: Math.floor((diff / 1000) % 60)
+      }
+    }
+    setTimeLeft(calc())
+    const timer = setInterval(() => setTimeLeft(calc()), 1000)
+    return () => clearInterval(timer)
+  }, [targetDate])
+
+  if (!timeLeft) return null
+  
+  if (timeLeft.d === 0 && Math.floor(targetDate.getTime() - Date.now()) <= 0) {
+    return <span className="text-[10px] md:text-xs font-bold text-status-danger animate-pulse mt-3 bg-status-danger/10 px-3 py-1 rounded-full">Starting Soon!</span>
+  }
+
+  return (
+    <div className="flex gap-1 md:gap-1.5 mt-3 text-center justify-center items-center bg-bg-base/50 border border-border-dim px-2 py-1 md:px-3 md:py-1.5 rounded-xl shadow-inner">
+      <Clock size={12} className="text-brand-primary mr-1 shrink-0" />
+      {timeLeft.d > 0 && <div className="flex flex-col"><span className="text-[10px] md:text-xs font-black text-text-primary">{timeLeft.d}</span><span className="text-[7px] md:text-[8px] text-text-muted leading-none">DAY</span></div>}
+      {timeLeft.d > 0 && <span className="text-text-muted/30 font-bold mb-1">:</span>}
+      <div className="flex flex-col"><span className="text-[10px] md:text-xs font-black text-text-primary">{timeLeft.h.toString().padStart(2, '0')}</span><span className="text-[7px] md:text-[8px] text-text-muted leading-none">HR</span></div>
+      <span className="text-text-muted/30 font-bold mb-1">:</span>
+      <div className="flex flex-col"><span className="text-[10px] md:text-xs font-black text-text-primary">{timeLeft.m.toString().padStart(2, '0')}</span><span className="text-[7px] md:text-[8px] text-text-muted leading-none">MIN</span></div>
+      {timeLeft.d === 0 && (
+        <>
+          <span className="text-text-muted/30 font-bold mb-1">:</span>
+          <div className="flex flex-col"><span className="text-[10px] md:text-xs font-black text-brand-primary">{timeLeft.s.toString().padStart(2, '0')}</span><span className="text-[7px] md:text-[8px] text-text-muted leading-none">SEC</span></div>
+        </>
+      )}
+    </div>
+  )
+}
 
 interface MatchCardProps {
   match: any
@@ -55,9 +98,16 @@ export default function MatchCard({ match, isLive = false, variant = 'standard' 
 
         {/* Teams Matchup */}
         <div className="flex justify-between items-center relative z-10 mb-4 flex-1">
-          <div className="flex flex-col items-center gap-2 w-2/5">
+          <div className="flex flex-col items-center gap-1.5 w-2/5">
             <TeamLogo src={match.team1_logo} name={match.team1_short_name || match.team1_name} sizeClass={isCompact ? 'w-10 h-10' : 'w-12 h-12 md:w-16 md:h-16'} />
-            <span className="text-xs md:text-sm font-bold text-text-primary text-center truncate w-full">{match.team1_short_name || match.team1_name || 'Team 1'}</span>
+            <div className="flex flex-col items-center w-full mt-1">
+              {match.team1_short_name && (
+                <span className="text-xs md:text-sm font-black text-text-primary text-center truncate w-full">{match.team1_short_name}</span>
+              )}
+              <span className={`text-[9px] md:text-[11px] font-semibold ${match.team1_short_name ? 'text-text-muted mt-0.5' : 'text-xs md:text-sm font-black text-text-primary'} text-center truncate w-full uppercase tracking-wider`}>
+                {match.team1_name || 'Team 1'}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col items-center justify-center w-1/5 shrink-0">
@@ -70,13 +120,26 @@ export default function MatchCard({ match, isLive = false, variant = 'standard' 
                 <span className="text-[10px] md:text-xs font-medium text-text-secondary">({match.overs_bowled || '0.0'})</span>
               </div>
             ) : (
-              <span className="text-xs md:text-sm font-black text-text-muted/50 italic uppercase">VS</span>
+              <div className="flex flex-col items-center justify-center">
+                <div className="bg-bg-elevated/40 border border-border-dim rounded-full w-9 h-9 md:w-12 md:h-12 flex items-center justify-center shadow-inner relative group-hover:scale-110 transition-transform duration-300">
+                  <div className="absolute inset-0 bg-brand-primary/10 rounded-full blur-md"></div>
+                  <span className="text-sm md:text-base font-black text-brand-primary italic relative z-10 drop-shadow-sm">VS</span>
+                </div>
+                {status === 'scheduled' && <CountdownTimer targetDate={dateObj} />}
+              </div>
             )}
           </div>
 
-          <div className="flex flex-col items-center gap-2 w-2/5">
+          <div className="flex flex-col items-center gap-1.5 w-2/5">
             <TeamLogo src={match.team2_logo} name={match.team2_short_name || match.team2_name} sizeClass={isCompact ? 'w-10 h-10' : 'w-12 h-12 md:w-16 md:h-16'} />
-            <span className="text-xs md:text-sm font-bold text-text-primary text-center truncate w-full">{match.team2_short_name || match.team2_name || 'Team 2'}</span>
+            <div className="flex flex-col items-center w-full mt-1">
+              {match.team2_short_name && (
+                <span className="text-xs md:text-sm font-black text-text-primary text-center truncate w-full">{match.team2_short_name}</span>
+              )}
+              <span className={`text-[9px] md:text-[11px] font-semibold ${match.team2_short_name ? 'text-text-muted mt-0.5' : 'text-xs md:text-sm font-black text-text-primary'} text-center truncate w-full uppercase tracking-wider`}>
+                {match.team2_name || 'Team 2'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -143,9 +206,16 @@ export default function MatchCard({ match, isLive = false, variant = 'standard' 
                 </span>
               </div>
             ) : (
-              <span className="text-3xl md:text-4xl font-black text-cyan-400 italic uppercase drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">
-                VS
-              </span>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-4xl md:text-5xl font-black text-cyan-400 italic uppercase drop-shadow-[0_0_15px_rgba(34,211,238,0.5)] transform hover:scale-110 transition-transform duration-300">
+                  VS
+                </span>
+                {status === 'scheduled' && (
+                  <div className="mt-6">
+                    <CountdownTimer targetDate={dateObj} />
+                  </div>
+                )}
+              </div>
             )}
           </div>
 

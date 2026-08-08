@@ -63,10 +63,10 @@ export default async function PublicMatches({ params }: { params: Promise<{ orgS
   const draft = matches.filter(m => m.status === 'draft')
 
   return (
-    <div className="min-h-screen font-sans space-y-12 animate-in fade-in duration-500">
+    <div className="min-h-screen font-sans space-y-8 animate-in fade-in duration-500">
       
       {/* Header Section */}
-      <div className="flex flex-col items-center justify-center text-center space-y-4 pt-8 pb-4">
+      <div className="flex flex-col items-center justify-center text-center space-y-3 pt-4 md:pt-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bg-elevated border border-border-dim text-xs font-bold tracking-widest text-text-secondary uppercase mb-2">
           <Calendar size={14} className="text-brand-primary" />
           All Fixtures & Results
