@@ -107,15 +107,15 @@ export function FullScorecard({ playingXi, ballEvents, inningsId, battingTeamId,
           Batting
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-text-primary whitespace-nowrap">
-            <thead className="bg-bg-base/50 text-xs uppercase text-text-muted">
+          <table className="w-full text-left text-xs sm:text-sm text-text-primary whitespace-nowrap">
+            <thead className="bg-bg-base/50 text-[10px] sm:text-xs uppercase text-text-muted">
               <tr>
-                <th className="px-4 py-2">Batter</th>
-                <th className="px-4 py-2 text-right">R</th>
-                <th className="px-4 py-2 text-right">B</th>
-                <th className="px-4 py-2 text-right">4s</th>
-                <th className="px-4 py-2 text-right">6s</th>
-                <th className="px-4 py-2 text-right">SR</th>
+                <th className="px-2 sm:px-4 py-2">Batter</th>
+                <th className="px-2 sm:px-4 py-2 text-right">R</th>
+                <th className="px-2 sm:px-4 py-2 text-right">B</th>
+                <th className="px-2 sm:px-4 py-2 text-right">4s</th>
+                <th className="px-2 sm:px-4 py-2 text-right">6s</th>
+                <th className="px-2 sm:px-4 py-2 text-right">SR</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-bg-elevated/50">
@@ -124,17 +124,17 @@ export function FullScorecard({ playingXi, ballEvents, inningsId, battingTeamId,
               ) : (
                 batters.map((b: any) => (
                   <tr key={b.id} className="hover:bg-bg-elevated/20 transition-colors">
-                    <td className="px-4 py-2">
-                      <div className="font-bold text-text-primary">{b.name}</div>
-                      <div className="text-xs text-text-muted capitalize">
+                    <td className="px-2 sm:px-4 py-2">
+                      <div className="font-bold text-text-primary truncate max-w-[110px] sm:max-w-[200px]">{b.name}</div>
+                      <div className="text-[10px] text-text-muted capitalize truncate max-w-[110px] sm:max-w-[200px]">
                         {b.out ? (b.dismissal.replace('_', ' ')) : 'not out'}
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-right font-black">{b.runs}</td>
-                    <td className="px-4 py-2 text-right text-text-secondary">{b.balls}</td>
-                    <td className="px-4 py-2 text-right text-text-secondary">{b.fours}</td>
-                    <td className="px-4 py-2 text-right text-text-secondary">{b.sixes}</td>
-                    <td className="px-4 py-2 text-right text-text-secondary">
+                    <td className="px-2 sm:px-4 py-2 text-right font-black">{b.runs}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right text-text-secondary">{b.balls}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right text-text-secondary">{b.fours}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right text-text-secondary">{b.sixes}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right text-text-secondary">
                       {b.balls > 0 ? ((b.runs / b.balls) * 100).toFixed(1) : '0.0'}
                     </td>
                   </tr>
@@ -143,9 +143,9 @@ export function FullScorecard({ playingXi, ballEvents, inningsId, battingTeamId,
               {/* Extras Row */}
               {extras.total > 0 && (
                  <tr className="bg-bg-base/30 font-semibold">
-                    <td className="px-4 py-2">Extras</td>
-                    <td colSpan={5} className="px-4 py-2 text-right">
-                       {extras.total} <span className="text-xs text-text-muted font-normal">(W {extras.wide}, NB {extras.no_ball}, B {extras.bye}, LB {extras.leg_bye})</span>
+                    <td className="px-2 sm:px-4 py-2">Extras</td>
+                    <td colSpan={5} className="px-2 sm:px-4 py-2 text-right">
+                       {extras.total} <span className="text-[10px] sm:text-xs text-text-muted font-normal">(W {extras.wide}, NB {extras.no_ball}, B {extras.bye}, LB {extras.leg_bye})</span>
                     </td>
                  </tr>
               )}
@@ -175,15 +175,15 @@ export function FullScorecard({ playingXi, ballEvents, inningsId, battingTeamId,
           Bowling
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-text-primary whitespace-nowrap">
-            <thead className="bg-bg-base/50 text-xs uppercase text-text-muted">
+          <table className="w-full text-left text-xs sm:text-sm text-text-primary whitespace-nowrap">
+            <thead className="bg-bg-base/50 text-[10px] sm:text-xs uppercase text-text-muted">
               <tr>
-                <th className="px-4 py-2">Bowler</th>
-                <th className="px-4 py-2 text-right">O</th>
-                <th className="px-4 py-2 text-right">M</th>
-                <th className="px-4 py-2 text-right">R</th>
-                <th className="px-4 py-2 text-right">W</th>
-                <th className="px-4 py-2 text-right">ECON</th>
+                <th className="px-2 sm:px-4 py-2">Bowler</th>
+                <th className="px-2 sm:px-4 py-2 text-right">O</th>
+                <th className="px-2 sm:px-4 py-2 text-right">M</th>
+                <th className="px-2 sm:px-4 py-2 text-right">R</th>
+                <th className="px-2 sm:px-4 py-2 text-right">W</th>
+                <th className="px-2 sm:px-4 py-2 text-right">ECON</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-bg-elevated/50">
@@ -192,12 +192,12 @@ export function FullScorecard({ playingXi, ballEvents, inningsId, battingTeamId,
               ) : (
                 bowlers.map((b: any) => (
                   <tr key={b.id} className="hover:bg-bg-elevated/20 transition-colors">
-                    <td className="px-4 py-2 font-bold">{b.name}</td>
-                    <td className="px-4 py-2 text-right font-medium">{b.oversDisplay}</td>
-                    <td className="px-4 py-2 text-right text-text-secondary">{b.maidens}</td>
-                    <td className="px-4 py-2 text-right font-medium">{b.runs}</td>
-                    <td className="px-4 py-2 text-right font-black text-text-primary">{b.wickets}</td>
-                    <td className="px-4 py-2 text-right text-text-secondary">{b.eco}</td>
+                    <td className="px-2 sm:px-4 py-2 font-bold truncate max-w-[110px] sm:max-w-[200px]">{b.name}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right font-medium">{b.oversDisplay}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right text-text-secondary">{b.maidens}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right font-medium">{b.runs}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right font-black text-brand-primary">{b.wickets}</td>
+                    <td className="px-2 sm:px-4 py-2 text-right text-text-secondary">{b.eco}</td>
                   </tr>
                 ))
               )}
