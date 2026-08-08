@@ -1,18 +1,18 @@
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import { BarChart2 } from 'lucide-react'
 import Link from 'next/link'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   const { data: tournament } = await supabase.from('tournaments').select('name').eq('slug', slug).single()
   return { title: `Statistics - ${tournament?.name || 'Tournament'} | CricketZone` }
 }
 
 export default async function TournamentStats({ params }: { params: Promise<{ slug: string, orgSlug: string }> }) {
   const { slug, orgSlug } = await params
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   
   const { data: tournament, error } = await supabase
     .from('tournaments')

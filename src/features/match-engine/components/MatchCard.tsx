@@ -183,7 +183,7 @@ export default function MatchCard({ match, isLive = false, variant = 'standard' 
               <span className="text-xs md:text-sm font-bold text-text-primary truncate">{match.team1_short_name || match.team1_name || 'Team 1'}</span>
             </div>
             {match.status !== 'scheduled' && (
-              <span className={`text-sm md:text-base font-black ${match.match_winner_id === match.team1_id ? 'text-text-primary' : 'text-text-secondary'}`}>
+              <span className={`text-sm md:text-base font-black ${match.winning_team_id === match.team1_id ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {match.total_runs || 0}<span className="text-[10px] font-bold text-text-muted">/{match.total_wickets || 0}</span>
               </span>
             )}
@@ -196,7 +196,7 @@ export default function MatchCard({ match, isLive = false, variant = 'standard' 
               <span className="text-xs md:text-sm font-bold text-text-primary truncate">{match.team2_short_name || match.team2_name || 'Team 2'}</span>
             </div>
             {match.status !== 'scheduled' && (
-              <span className={`text-sm md:text-base font-black ${match.match_winner_id === match.team2_id ? 'text-text-primary' : 'text-text-secondary'}`}>
+              <span className={`text-sm md:text-base font-black ${match.winning_team_id === match.team2_id ? 'text-text-primary' : 'text-text-secondary'}`}>
                 {match.team2_runs || 0}<span className="text-[10px] font-bold text-text-muted">/{match.team2_wickets || 0}</span>
               </span>
             )}

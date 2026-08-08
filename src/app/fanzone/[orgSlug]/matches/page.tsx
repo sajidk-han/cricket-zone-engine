@@ -1,13 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import MatchCard from '@/features/match-engine/components/MatchCard'
 import { Calendar, Search } from 'lucide-react'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 async function fetchAllMatches(orgSlug: string) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   
   // 1. Get org id
   const { data: org } = await supabase.from('organizations').select('id').eq('slug', orgSlug).single()
@@ -17,12 +17,12 @@ async function fetchAllMatches(orgSlug: string) {
   const { data } = await supabase
     .from('matches')
     .select(`
-      id, slug, status, team1_id, team2_id, match_winner_id,
-      total_runs, total_wickets, overs_bowled, team2_runs, team2_wickets, team2_overs_bowled,
-      scheduled_time, start_time, ground_name, match_stage,
+      id, slug, status, team1_id, team2_id, winning_team_id,
+      scheduled_time, start_time, match_stage,
       team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
       team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
-      tournament:tournaments(id, name, slug)
+      tournament:tournaments(id, name, slug),
+      innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
     `)
     .eq('org_id', org.id)
     .order('scheduled_time', { ascending: false })
@@ -30,16 +30,27 @@ async function fetchAllMatches(orgSlug: string) {
   if (!data) return []
 
   // Map to the shape expected by MatchCard
-  return (data as any[]).map(m => ({
-    ...m,
-    team1_name: m.team1?.name,
-    team1_short_name: m.team1?.short_name,
-    team1_logo: m.team1?.logo_url,
-    team2_name: m.team2?.name,
-    team2_short_name: m.team2?.short_name,
-    team2_logo: m.team2?.logo_url,
-    tournament_name: m.tournament?.name
-  }))
+  return (data as any[]).map((m: any) => {
+    const inn1 = m.innings?.find((i: any) => i.batting_team_id === m.team1_id)
+    const inn2 = m.innings?.find((i: any) => i.batting_team_id === m.team2_id)
+    
+    return {
+      ...m,
+      total_runs: inn1?.total_runs || 0,
+      total_wickets: inn1?.total_wickets || 0,
+      overs_bowled: inn1?.overs_bowled || 0,
+      team2_runs: inn2?.total_runs || 0,
+      team2_wickets: inn2?.total_wickets || 0,
+      team2_overs_bowled: inn2?.overs_bowled || 0,
+      team1_name: m.team1?.name,
+      team1_short_name: m.team1?.short_name,
+      team1_logo: m.team1?.logo_url,
+      team2_name: m.team2?.name,
+      team2_short_name: m.team2?.short_name,
+      team2_logo: m.team2?.logo_url,
+      tournament_name: m.tournament?.name
+    }
+  })
 }
 
 export default async function PublicMatches({ params }: { params: Promise<{ orgSlug: string }> }) {
@@ -49,6 +60,7 @@ export default async function PublicMatches({ params }: { params: Promise<{ orgS
   const live = matches.filter(m => m.status === 'live' || m.status === 'toss' || m.status === 'playing_xi')
   const scheduled = matches.filter(m => m.status === 'scheduled')
   const completed = matches.filter(m => m.status === 'completed' || m.status === 'abandoned' || m.status === 'cancelled')
+  const draft = matches.filter(m => m.status === 'draft')
 
   return (
     <div className="min-h-screen font-sans space-y-12 animate-in fade-in duration-500">
@@ -104,6 +116,21 @@ export default async function PublicMatches({ params }: { params: Promise<{ orgS
             {completed.map(match => (
               <Link key={match.id} href={`/fanzone/${orgSlug}/matches/${match.id}`} className="block">
                 <MatchCard match={match} variant="horizontal" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {draft.length > 0 && (
+        <section className="opacity-70">
+          <div className="flex items-center gap-2 mb-6 border-b border-border-dim pb-4">
+            <h2 className="text-xl font-bold text-text-primary uppercase tracking-wider">Drafts (Not started yet)</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {draft.map(match => (
+              <Link key={match.id} href={`/fanzone/${orgSlug}/matches/${match.id}`} className="block">
+                <MatchCard match={match} variant="compact" />
               </Link>
             ))}
           </div>

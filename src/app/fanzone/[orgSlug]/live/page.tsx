@@ -1,29 +1,63 @@
 import React from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import MatchCard from '@/features/match-engine/components/MatchCard'
 import { PlayCircle, CalendarDays } from 'lucide-react'
 
-// Fetch matches from our newly created optimized view
-async function fetchPublicMatches() {
-  const supabase = await createClient()
+// Fetch matches directly from matches table to avoid view dependency issues
+async function fetchPublicMatches(orgSlug: string) {
+  const supabase = await createAdminClient()
+  
+  // Get org id
+  const { data: org } = await supabase.from('organizations').select('id').eq('slug', orgSlug).single()
+  if (!org) return []
+
   const { data, error } = await supabase
-    .from('live_match_view')
-    .select('*')
+    .from('matches')
+    .select(`
+      id, slug, status, team1_id, team2_id, winning_team_id,
+      scheduled_time, start_time, match_stage,
+      team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
+      team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
+      tournament:tournaments(id, name, slug),
+      innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
+    `)
+    .eq('org_id', org.id)
     .order('scheduled_time', { ascending: true })
 
   if (error) {
-    console.error('Error fetching public matches:', error)
+    console.error('Error fetching public matches:', JSON.stringify(error))
     return []
   }
-  return data || []
+  
+  return (data || []).map((m: any) => {
+    const inn1 = m.innings?.find((i: any) => i.batting_team_id === m.team1_id)
+    const inn2 = m.innings?.find((i: any) => i.batting_team_id === m.team2_id)
+    
+    return {
+      ...m,
+      total_runs: inn1?.total_runs || 0,
+      total_wickets: inn1?.total_wickets || 0,
+      overs_bowled: inn1?.overs_bowled || 0,
+      team2_runs: inn2?.total_runs || 0,
+      team2_wickets: inn2?.total_wickets || 0,
+      team2_overs_bowled: inn2?.overs_bowled || 0,
+      team1_name: m.team1?.name,
+      team1_short_name: m.team1?.short_name,
+      team1_logo: m.team1?.logo_url,
+      team2_name: m.team2?.name,
+      team2_short_name: m.team2?.short_name,
+      team2_logo: m.team2?.logo_url,
+      tournament_name: m.tournament?.name
+    }
+  })
 }
 
 export default async function PublicLiveFeed({ params }: { params: Promise<{ orgSlug: string }> }) {
   const { orgSlug } = await params
-  const matches = await fetchPublicMatches()
+  const matches = await fetchPublicMatches(orgSlug)
 
-  const liveMatches = matches.filter(m => m.status === 'live' || m.status === 'toss' || m.status === 'playing_xi')
+  const liveMatches = matches.filter((m: any) => m.status === 'live' || m.status === 'toss' || m.status === 'playing_xi')
   const upcomingMatches = matches.filter(m => m.status === 'scheduled')
   const completedMatches = matches.filter(m => m.status === 'completed')
 

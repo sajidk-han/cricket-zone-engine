@@ -157,13 +157,14 @@ export function FullScorecard({ playingXi, ballEvents, inningsId, battingTeamId,
       {/* Fall of Wickets */}
       {fow.length > 0 && (
         <div className="bg-bg-surface border border-bg-elevated rounded-xl p-4 shadow-lg text-sm">
-          <div className="font-black text-xs uppercase tracking-wider text-text-secondary mb-2">Fall of Wickets</div>
-          <div className="text-text-primary leading-relaxed">
+          <div className="font-black text-xs uppercase tracking-wider text-text-secondary mb-3">Fall of Wickets</div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {fow.map((w: any, idx: number) => (
-               <span key={idx}>
-                 <span className="font-bold text-text-secondary">{w.runs}-{w.wicketNumber}</span> ({w.player})
-                 {idx < fow.length - 1 ? ', ' : ''}
-               </span>
+              <div key={idx} className="flex-shrink-0 flex flex-col items-center justify-center bg-bg-elevated/40 border border-border-dim rounded-lg p-3 min-w-[90px] transition-transform hover:-translate-y-1">
+                <div className="text-[10px] text-text-muted font-bold mb-1 uppercase tracking-widest">Wkt {w.wicketNumber}</div>
+                <div className="text-lg font-black text-brand-primary">{w.runs}</div>
+                <div className="text-[11px] font-semibold text-text-secondary truncate w-full text-center mt-1" title={w.player}>{w.player}</div>
+              </div>
             ))}
           </div>
         </div>

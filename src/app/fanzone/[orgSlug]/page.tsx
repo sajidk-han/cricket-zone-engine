@@ -26,10 +26,11 @@ async function getFanzoneData(orgSlug: string) {
     const { data: liveMatches } = await supabase
       .from('matches')
       .select(`
-        id, slug, status, team1_id, team2_id, 
+        id, slug, status, team1_id, team2_id, winning_team_id,
         team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
         team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
-        tournament:tournaments(id, name, slug)
+        tournament:tournaments(id, name, slug),
+        innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
       `)
       .eq('org_id', org.id)
       .in('status', ['live', 'scheduled', 'completed'])
@@ -48,18 +49,42 @@ async function getFanzoneData(orgSlug: string) {
         id, slug, status, result_reason, winning_team_id,
         team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
         team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
-        winning_team:teams!matches_winning_team_id_fkey(id, name)
+        winning_team:teams!matches_winning_team_id_fkey(id, name),
+        tournament:tournaments(id, name, slug),
+        innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
       `)
       .eq('org_id', org.id)
       .eq('status', 'completed')
       .order('end_time', { ascending: false })
       .limit(4)
 
+    const mapMatchData = (m: any) => {
+      const inn1 = m.innings?.find((i: any) => i.batting_team_id === m.team1_id)
+      const inn2 = m.innings?.find((i: any) => i.batting_team_id === m.team2_id)
+      
+      return {
+        ...m,
+        total_runs: inn1?.total_runs || 0,
+        total_wickets: inn1?.total_wickets || 0,
+        overs_bowled: inn1?.overs_bowled || 0,
+        team2_runs: inn2?.total_runs || 0,
+        team2_wickets: inn2?.total_wickets || 0,
+        team2_overs_bowled: inn2?.overs_bowled || 0,
+        team1_name: m.team1?.name,
+        team1_short_name: m.team1?.short_name,
+        team1_logo: m.team1?.logo_url,
+        team2_name: m.team2?.name,
+        team2_short_name: m.team2?.short_name,
+        team2_logo: m.team2?.logo_url,
+        tournament_name: m.tournament?.name
+      }
+    }
+
     return {
       organization: org,
-      liveMatches: liveMatches || [],
+      liveMatches: (liveMatches || []).map(mapMatchData),
       featuredTeams: featuredTeams || [],
-      recentResults: recentResults || []
+      recentResults: (recentResults || []).map(mapMatchData)
     }
   } catch (error) {
     console.error('Direct DB Error:', error)

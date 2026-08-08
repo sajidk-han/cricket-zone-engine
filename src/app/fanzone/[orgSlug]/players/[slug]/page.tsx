@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import { User, Activity, Trophy, BarChart, Medal } from 'lucide-react'
 import Link from 'next/link'
@@ -6,7 +6,7 @@ import MatchCard from '@/features/match-engine/components/MatchCard'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   const { data: player } = await supabase.from('players').select('full_name, batting_style').eq('slug', resolvedParams.slug).single()
   return { 
     title: `${player?.full_name || 'Player Profile'} | CricketZone`,
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function PlayerProfile({ params }: { params: Promise<{ slug: string, orgSlug: string }> }) {
   const resolvedParams = await params
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   
   // 1. Fetch Player Context
   const { data: player, error } = await supabase

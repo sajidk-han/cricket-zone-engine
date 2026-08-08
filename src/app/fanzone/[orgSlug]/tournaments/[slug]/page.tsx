@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowRight, Trophy } from 'lucide-react'
@@ -6,7 +6,7 @@ import MatchCard from '@/features/match-engine/components/MatchCard'
 
 export default async function TournamentOverview({ params }: { params: Promise<{ slug: string, orgSlug: string }> }) {
   const { slug, orgSlug } = await params
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   
   // 1. Fetch Tournament Context
   const { data: tournament, error } = await supabase

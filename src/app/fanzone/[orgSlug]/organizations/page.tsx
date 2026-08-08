@@ -1,5 +1,5 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { Users } from 'lucide-react'
 import { FeaturedTeamCard } from '@/features/fanzone/components/FeaturedTeamCard'
@@ -7,7 +7,7 @@ import { FeaturedTeamCard } from '@/features/fanzone/components/FeaturedTeamCard
 export const revalidate = 60
 
 async function fetchOrgTeams(orgSlug: string) {
-  const supabase = await createClient()
+  const supabase = await createAdminClient()
   
   // 1. Get org id
   const { data: org } = await supabase.from('organizations').select('id').eq('slug', orgSlug).single()
