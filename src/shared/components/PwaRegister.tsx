@@ -52,20 +52,17 @@ export function PwaRegister() {
   if (!showInstallPrompt) return null
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] bg-brand-primary text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-10 border border-brand-primary/50">
-      <div className="flex flex-col">
-        <span className="font-bold text-sm">Install CricketZone</span>
-        <span className="text-xs opacity-80">Add to home screen for faster access</span>
-      </div>
+    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[9999] bg-brand-primary text-white px-3 py-2 rounded-lg shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-10 border border-brand-primary/50 whitespace-nowrap">
+      <span className="font-bold text-sm">Install CricketZone</span>
       <button 
         onClick={handleInstallClick}
-        className="bg-white text-brand-primary px-3 py-1.5 rounded-lg text-sm font-bold shadow hover:bg-gray-100 transition-colors flex items-center gap-2"
+        className="bg-white text-brand-primary px-3 py-1.5 rounded-md text-xs font-bold shadow hover:bg-gray-100 transition-colors flex items-center gap-1.5"
       >
-        <Download size={16} />
+        <Download size={14} />
         Install
       </button>
-      <button onClick={() => setShowInstallPrompt(false)} className="p-1 hover:bg-white/20 rounded-md transition-colors ml-2">
-        <X size={16} />
+      <button onClick={() => setShowInstallPrompt(false)} className="p-1 hover:bg-white/20 rounded-md transition-colors">
+        <X size={14} />
       </button>
     </div>
   )
