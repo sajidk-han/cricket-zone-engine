@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import Link from 'next/link'
-import { Plus, Trophy, Calendar, MapPin, Search } from 'lucide-react'
+import { Plus, Trophy, Calendar, MapPin, Search, ArrowRight } from 'lucide-react'
 import { Button } from '@/shared/components/ui/Button'
 import { Card, CardContent } from '@/shared/components/ui/Card'
 import { getTournaments } from '@/app/actions/tournaments'
@@ -122,10 +122,11 @@ async function TournamentList() {
               )}
             </div>
 
-            <div className="pt-4 border-t border-bg-elevated/50 flex justify-between items-center">
-              <Link href={`/tournaments/${t.id}/dashboard`}>
-                <button className="h-8 px-3 rounded-full text-xs font-medium border border-green-400/30 text-green-400 hover:bg-green-400 hover:text-bg-base hover:border-green-400 transition-all duration-200">
+            <div className="pt-5 border-t border-bg-elevated/50 flex justify-center items-center w-full mt-auto">
+              <Link href={`/tournaments/${t.id}/dashboard`} className="w-full">
+                <button className="w-full h-11 bg-brand-primary hover:bg-brand-primary/90 text-bg-base font-bold text-sm rounded-lg transition-all duration-200 shadow-[0_4px_14px_0_rgba(34,197,94,0.39)] hover:shadow-[0_6px_20px_rgba(34,197,94,0.23)] hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
                   Manage Workspace
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </Link>
             </div>
