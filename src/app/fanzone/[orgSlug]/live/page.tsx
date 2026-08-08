@@ -58,8 +58,8 @@ export default async function PublicLiveFeed({ params }: { params: Promise<{ org
   const matches = await fetchPublicMatches(orgSlug)
 
   const liveMatches = matches.filter((m: any) => m.status === 'live' || m.status === 'toss' || m.status === 'playing_xi')
-  const upcomingMatches = matches.filter(m => m.status === 'scheduled')
-  const completedMatches = matches.filter(m => m.status === 'completed')
+  const upcomingMatches = matches.filter((m: any) => m.status === 'scheduled')
+  const completedMatches = matches.filter((m: any) => m.status === 'completed')
 
   const heroMatch = liveMatches.length > 0 ? liveMatches[0] : (upcomingMatches.length > 0 ? upcomingMatches[0] : null)
   const remainingLive = liveMatches.length > 0 ? liveMatches.slice(1) : []
