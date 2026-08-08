@@ -71,7 +71,10 @@ export default function FanZoneMatchPage() {
     if (xiData) {
       setPlayingXi(xiData)
       const map: Record<string, string> = {}
-      xiData.forEach(p => map[p.player.id] = p.player.full_name)
+      xiData.forEach((p: any) => {
+        const pObj = Array.isArray(p.player) ? p.player[0] : p.player
+        if (pObj) map[pObj.id] = pObj.full_name
+      })
       setPlayersMap(map)
     }
 
