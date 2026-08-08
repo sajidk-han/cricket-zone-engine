@@ -1,7 +1,7 @@
 'use client' // Force JIT recompile
 
 import React, { useState, useEffect } from 'react' // Force HMR reload
-import { MapPin, CalendarDays, Trophy, Clock } from 'lucide-react'
+import { MapPin, CalendarDays, Trophy, Clock, ArrowRight, PlayCircle } from 'lucide-react'
 import { StatusBadge, MatchStatus } from '@/shared/components/ui/StatusBadge'
 
 function CountdownTimer({ targetDate }: { targetDate: Date }) {
@@ -232,7 +232,17 @@ export default function MatchCard({ match, isLive = false, variant = 'standard' 
               {match.team2_name || 'Team 2'}
             </span>
           </div>
+        </div>
 
+        {/* Persistent Call to Action */}
+        <div className="mt-8 md:mt-12 flex justify-center w-full relative z-20">
+          <div className="bg-gradient-to-r from-red-600 to-rose-600 border border-red-500/50 text-white px-8 md:px-10 py-3.5 md:py-4 rounded-full flex items-center gap-3 transition-all duration-300 shadow-[0_0_25px_rgba(225,29,72,0.5)] hover:shadow-[0_0_40px_rgba(225,29,72,0.8)] hover:scale-105 cursor-pointer group/btn">
+            <div className="relative flex items-center justify-center">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-white/40 opacity-75 animate-ping"></span>
+              <PlayCircle size={20} className="relative text-white group-hover/btn:scale-110 transition-transform" />
+            </div>
+            <span className="text-xs md:text-sm font-black tracking-widest uppercase text-white drop-shadow-md">{status === 'live' ? 'Watch Live Match' : 'View Match Center'}</span>
+          </div>
         </div>
       </div>
     )

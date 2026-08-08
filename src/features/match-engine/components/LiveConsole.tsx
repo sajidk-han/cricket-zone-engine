@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/shared/components/ui/Card'
 import { Button } from '@/shared/components/ui/Button'
 import { Activity, CircleDashed, ShieldAlert, Wifi, Settings, RefreshCw } from 'lucide-react'
 import { toast } from 'react-hot-toast'
-import { initializeInnings, DeliveryPayload, undoLastBall } from '@/app/actions/scoring'
+import { initializeInnings, DeliveryPayload, undoLastBall, endInnings } from '@/app/actions/scoring'
 import { WicketResolutionDrawer } from './WicketResolutionDrawer'
 import { BowlerSelectionDrawer } from './BowlerSelectionDrawer'
 import { BatterSelectionDrawer } from './BatterSelectionDrawer'
@@ -234,6 +234,28 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
       }
     })
   }
+
+  const handleEndInnings = () => {
+    if (isPending) return
+    startTransition(async () => {
+      const res = await endInnings(matchId, currentInnings.id)
+      if (res.success) {
+        toast.success(res.message)
+        setTimeout(() => window.location.reload(), 1000)
+      } else {
+        toast.error(res.message)
+      }
+    })
+  }
+
+  // Calculate Innings Limits
+  const baseLegalBallsBowled = currentInnings ? Math.floor(currentInnings.overs_bowled) * 6 + Math.round((currentInnings.overs_bowled % 1) * 10) : 0
+  const totalBallsBowled = offlineState ? offlineState.legalBallsBowled : baseLegalBallsBowled
+  const maxBalls = (match.scheduled_overs || 20) * 6
+  
+  const isMaxOversReached = totalBallsBowled >= maxBalls
+  const isAllOut = (offlineState ? offlineState.totalWickets : currentInnings?.total_wickets || 0) >= 10
+  const shouldEndInnings = isMaxOversReached || isAllOut
 
   // If there's no active innings record, show the Initialization screen
   if (!currentInnings) {
@@ -494,38 +516,54 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
-                  {[0, 1, 2, 3, 4, 6].map(run => (
+                {shouldEndInnings ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center bg-bg-base rounded-xl border border-border-dim shadow-inner h-full mb-8">
+                    <h3 className="text-2xl font-black text-text-primary mb-2">Innings Complete!</h3>
+                    <p className="text-text-muted mb-8 text-sm">{isAllOut ? 'Team is All Out.' : `Maximum overs (${match.scheduled_overs || 20}) reached.`}</p>
                     <Button 
-                      key={run} 
-                      variant={run === 4 || run === 6 ? 'primary' : 'outline'} 
-                      className={`h-16 sm:h-20 text-2xl sm:text-3xl font-black rounded-xl transition-transform hover:scale-105 ${run === 4 || run === 6 ? 'shadow-lg shadow-brand-primary/20' : 'border-bg-elevated text-text-primary hover:border-text-secondary bg-bg-base'}`}
-                      onClick={() => handleScore(run, true)}
+                      className="h-14 px-8 text-lg font-bold bg-brand-primary hover:bg-brand-primary/80"
+                      onClick={handleEndInnings}
                       isLoading={isPending}
                     >
-                      {run}
+                      End Innings & Switch
                     </Button>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
+                      {[0, 1, 2, 3, 4, 6].map(run => (
+                        <Button 
+                          key={run} 
+                          variant={run === 4 || run === 6 ? 'primary' : 'outline'} 
+                          className={`h-16 sm:h-20 text-2xl sm:text-3xl font-black rounded-xl transition-transform hover:scale-105 ${run === 4 || run === 6 ? 'shadow-lg shadow-brand-primary/20' : 'border-bg-elevated text-text-primary hover:border-text-secondary bg-bg-base'}`}
+                          onClick={() => handleScore(run, true)}
+                          isLoading={isPending}
+                        >
+                          {run}
+                        </Button>
+                      ))}
+                    </div>
 
-                <h3 className="text-xs font-bold text-text-secondary uppercase mb-3">Extras</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
-                  <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-yellow-500/50" onClick={() => handleScore(0, false, 'wide', 1)} disabled={isPending}>Wide</Button>
-                  <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-yellow-500/50" onClick={() => handleScore(0, false, 'no_ball', 1)} disabled={isPending}>No Ball</Button>
-                  <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-blue-500/50" onClick={() => handleScore(0, true, 'bye', 1)} disabled={isPending}>Bye</Button>
-                  <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-blue-500/50" onClick={() => handleScore(0, true, 'leg_bye', 1)} disabled={isPending}>Leg Bye</Button>
-                </div>
-              </div>
+                    <h3 className="text-xs font-bold text-text-secondary uppercase mb-3">Extras</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
+                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-yellow-500/50" onClick={() => handleScore(0, false, 'wide', 1)} disabled={isPending}>Wide</Button>
+                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-yellow-500/50" onClick={() => handleScore(0, false, 'no_ball', 1)} disabled={isPending}>No Ball</Button>
+                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-blue-500/50" onClick={() => handleScore(0, true, 'bye', 1)} disabled={isPending}>Bye</Button>
+                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-blue-500/50" onClick={() => handleScore(0, true, 'leg_bye', 1)} disabled={isPending}>Leg Bye</Button>
+                    </div>
 
-              <div className="pt-6 border-t border-bg-elevated mt-auto">
-                <Button 
-                  variant="outline" 
-                  className="w-full h-16 bg-red-500/5 border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 font-black text-xl tracking-widest uppercase transition-all rounded-xl shadow-lg hover:shadow-red-500/20"
-                  onClick={() => setIsWicketDrawerOpen(true)}
-                  disabled={isPending}
-                >
-                  Wicket
-                </Button>
+                    <div className="pt-6 border-t border-bg-elevated mt-auto">
+                      <Button 
+                        variant="outline" 
+                        className="w-full h-16 bg-red-500/5 border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 font-black text-xl tracking-widest uppercase transition-all rounded-xl shadow-lg hover:shadow-red-500/20"
+                        onClick={() => setIsWicketDrawerOpen(true)}
+                        disabled={isPending}
+                      >
+                        Wicket
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

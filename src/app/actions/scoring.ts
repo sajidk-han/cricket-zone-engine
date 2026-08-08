@@ -64,6 +64,29 @@ export async function initializeInnings(
   }
 }
 
+export async function endInnings(matchId: string, currentInningsId: string) {
+  try {
+    const supabase = await createClient()
+    
+    // Mark current innings as completed
+    await supabase.from('innings').update({ is_completed: true }).eq('id', currentInningsId)
+    
+    // Transition match to innings break and update current_innings
+    await supabase.from('matches').update({ 
+      status: 'innings_break',
+      current_innings: 2,
+      match_statistics: {} // Clear match stats so they have to pick new batters
+    }).eq('id', matchId)
+    
+    revalidatePath(`/matches/${matchId}/dashboard`)
+    revalidatePath(`/admin/matches/${matchId}/live`)
+    return { success: true, message: "Innings ended successfully" }
+  } catch (error: any) {
+    console.error("endInnings error", error)
+    return { success: false, message: "Failed to end innings" }
+  }
+}
+
 export type DeliveryPayload = {
   runsOffBat: number
   isLegalDelivery: boolean
