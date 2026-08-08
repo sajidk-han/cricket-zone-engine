@@ -9,8 +9,8 @@ export interface AnalyticsBall {
 
 export interface WormDataPoint {
   over: number; // e.g., 1, 2, 3
-  team1Runs?: number;
-  team2Runs?: number;
+  team1Runs?: number | null;
+  team2Runs?: number | null;
 }
 
 export interface ManhattanDataPoint {
