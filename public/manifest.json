@@ -3,6 +3,7 @@
   "short_name": "CricketZone",
   "description": "Premium District-Level Cricket SaaS & Fan Zone for Pakistan",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#09090b",
   "theme_color": "#09090b",
