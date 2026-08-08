@@ -52,7 +52,7 @@ export function PwaRegister() {
   if (!showInstallPrompt) return null
 
   return (
-    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[9999] bg-brand-primary text-white px-3 py-2 rounded-lg shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-10 border border-brand-primary/50 whitespace-nowrap">
+    <div className="md:hidden fixed top-20 left-1/2 -translate-x-1/2 z-[9999] bg-brand-primary text-white px-3 py-2 rounded-lg shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-10 border border-brand-primary/50 whitespace-nowrap">
       <span className="font-bold text-sm">Install CricketZone</span>
       <button 
         onClick={handleInstallClick}
