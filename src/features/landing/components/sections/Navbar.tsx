@@ -31,7 +31,7 @@ export function LandingNavbar() {
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
           <Link href="#features" className="text-sm font-semibold text-[#a3aed1] hover:text-white transition-colors">Features</Link>
-          <Link href="#fanzone" className="text-sm font-semibold text-[#a3aed1] hover:text-white transition-colors">Fan Zone</Link>
+          <Link href="/fanzone" className="text-sm font-semibold text-[#a3aed1] hover:text-white transition-colors">Fan Zone</Link>
           <Link href="#pricing" className="text-sm font-semibold text-[#a3aed1] hover:text-white transition-colors">Pricing</Link>
           <Link href="/docs" className="text-sm font-semibold text-[#a3aed1] hover:text-white transition-colors">Documentation</Link>
         </div>

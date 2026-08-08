@@ -75,15 +75,15 @@ export function HeroSection() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6"
         >
-          <Link href="#interactive-demo" className="w-full sm:w-auto">
+          <Link href="/fanzone" className="w-full sm:w-auto">
             <button className="w-full sm:w-auto rounded-full px-8 py-4 text-lg font-bold bg-brand-primary text-white shadow-lg shadow-brand-primary/25 hover:shadow-brand-primary/50 hover:-translate-y-1 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group ring-2 ring-transparent hover:ring-brand-primary/50 relative overflow-hidden focus:outline-none">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out"></div>
               <Play size={20} fill="currentColor" />
-              Try Interactive Demo
+              Explore Fan Zone
             </button>
           </Link>
           <Link href="/register" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto rounded-full px-8 py-4 text-lg font-bold border border-blue-400 bg-blue-500 hover:bg-blue-400 text-white backdrop-blur-md hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-blue-500/20 group flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+            <button className="w-full sm:w-auto rounded-full px-8 py-4 text-lg font-bold border border-[#a3aed1]/30 hover:border-brand-accent/50 bg-[#111c44]/50 hover:bg-[#1b2559] text-white backdrop-blur-md hover:-translate-y-1 transition-all duration-300 shadow-xl group flex items-center justify-center focus:outline-none">
               Start a Tournament
               <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
