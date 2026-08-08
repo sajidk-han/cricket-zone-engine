@@ -30,7 +30,7 @@ async function fetchAllMatches(orgSlug: string) {
   if (!data) return []
 
   // Map to the shape expected by MatchCard
-  return data.map(m => ({
+  return (data as any[]).map(m => ({
     ...m,
     team1_name: m.team1?.name,
     team1_short_name: m.team1?.short_name,
