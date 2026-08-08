@@ -82,7 +82,7 @@ export default async function FanZoneHubPage() {
           </h2>
           <div className="grid gap-4">
             {featuredOrgs.length > 0 ? (
-              featuredOrgs.map((org) => (
+              featuredOrgs.map((org: any) => (
                 <Link key={org.id} href={`/fanzone/${org.slug}`} className="group bg-[#111c44] border border-[#1b2559] hover:border-brand-primary/50 p-4 rounded-xl flex items-center justify-between transition-all hover:shadow-lg hover:shadow-brand-primary/10">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2">
