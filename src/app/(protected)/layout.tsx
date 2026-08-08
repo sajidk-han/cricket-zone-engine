@@ -2,6 +2,7 @@ import React from 'react'
 import { Sidebar } from '@/shared/components/layout/Sidebar'
 import { GlobalHeader } from '@/shared/components/layout/GlobalHeader'
 import { CommandPalette } from '@/shared/components/layout/CommandPalette'
+import { MobileNav } from '@/shared/components/layout/MobileNav'
 
 export default function ProtectedLayout({
   children,
@@ -13,11 +14,12 @@ export default function ProtectedLayout({
       <Sidebar />
       <div className="md:ml-64 flex flex-col min-h-screen">
         <GlobalHeader />
-        <main className="flex-1 overflow-x-hidden p-4 md:p-8">
+        <main className="flex-1 overflow-x-hidden p-4 pb-24 md:p-8 md:pb-8">
           {children}
         </main>
       </div>
       <CommandPalette />
+      <MobileNav />
     </div>
   )
 }
