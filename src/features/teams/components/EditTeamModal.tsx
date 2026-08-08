@@ -35,6 +35,8 @@ export function EditTeamModal({ team }: { team: any }) {
         
         toast.success(res.message)
         setIsOpen(false)
+        // Reload to show new logo from server
+        window.location.reload()
       } else {
         toast.error(res.message)
       }
