@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { UploadCloud, Image as ImageIcon, X, Loader2, AlertCircle } from 'lucide-react'
-import { createClient } from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase'
 
 export interface ImageUploadHandle {
   upload: (dynamicFolderPath?: string, dynamicFileName?: string) => Promise<string | null>;
@@ -107,7 +107,6 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
       const activeName = name || fileName
       if (!activePath) throw new Error("Folder path is required for upload")
 
-      const supabase = createClient()
       const fullPath = `${activePath}/${activeName}`
       
       const { data, error: uploadError } = await supabase
