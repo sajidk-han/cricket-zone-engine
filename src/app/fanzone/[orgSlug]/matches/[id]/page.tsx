@@ -96,7 +96,10 @@ export default function FanZoneMatchPage() {
     // Combine player IDs from all sources (Playing XI, Match Stats, Ball Events) to fetch names
     const pIds = new Set<string>()
     if (xiData) {
-       xiData.forEach(p => pIds.add(p.player.id))
+       xiData.forEach((p: any) => {
+         const pObj = Array.isArray(p.player) ? p.player[0] : p.player
+         if (pObj?.id) pIds.add(pObj.id)
+       })
     }
     if (statData?.match_statistics) {
        if (statData.match_statistics.current_striker) pIds.add(statData.match_statistics.current_striker)
