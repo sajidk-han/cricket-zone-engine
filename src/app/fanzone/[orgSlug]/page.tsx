@@ -6,24 +6,71 @@ import { FeaturedTeamCard } from '@/features/fanzone/components/FeaturedTeamCard
 import { JsonLd, generateSportsEventSchema } from '@/features/fanzone/components/JsonLd'
 import { ChevronRight, Activity, Calendar, Trophy, PlayCircle } from 'lucide-react'
 
+import { createAdminClient } from '@/lib/supabase-server'
+
 // Allow ISR revalidation for the home page (every 60s)
 export const revalidate = 60
 
-async function fetchFanzoneHome(orgSlug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/fanzone/${orgSlug}/home`, {
-    next: { revalidate: 60 }
-  })
-  
-  if (!res.ok) {
+async function getFanzoneData(orgSlug: string) {
+  try {
+    const supabase = await createAdminClient()
+
+    const { data: org, error: orgError } = await supabase
+      .from('organizations')
+      .select('id, name')
+      .eq('slug', orgSlug)
+      .single()
+
+    if (orgError || !org) return null
+
+    const { data: liveMatches } = await supabase
+      .from('matches')
+      .select(`
+        id, slug, status, team1_id, team2_id, 
+        team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
+        team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
+        tournament:tournaments(id, name, slug)
+      `)
+      .eq('org_id', org.id)
+      .in('status', ['live', 'scheduled', 'completed'])
+      .order('status', { ascending: true })
+      .limit(5)
+
+    const { data: featuredTeams } = await supabase
+      .from('teams')
+      .select('id, name, short_name, slug, logo_url')
+      .eq('org_id', org.id)
+      .limit(4)
+
+    const { data: recentResults } = await supabase
+      .from('matches')
+      .select(`
+        id, slug, status, result_reason, winning_team_id,
+        team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
+        team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
+        winning_team:teams!matches_winning_team_id_fkey(id, name)
+      `)
+      .eq('org_id', org.id)
+      .eq('status', 'completed')
+      .order('end_time', { ascending: false })
+      .limit(4)
+
+    return {
+      organization: org,
+      liveMatches: liveMatches || [],
+      featuredTeams: featuredTeams || [],
+      recentResults: recentResults || []
+    }
+  } catch (error) {
+    console.error('Direct DB Error:', error)
     return null
   }
-  return res.json()
 }
 
 export default async function FanZoneHome({ params }: { params: Promise<{ orgSlug: string }> }) {
   const { orgSlug } = await params
   
-  const data = await fetchFanzoneHome(orgSlug)
+  const data = await getFanzoneData(orgSlug)
   const flags = await getFeatureFlags()
 
   if (!data || !data.organization) {
