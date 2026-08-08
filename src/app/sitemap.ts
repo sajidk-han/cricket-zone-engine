@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ])
 
   // Map organizations to sitemap entries
-  const orgEntries = organizations.map((org) => ({
+  const orgEntries = organizations.map((org: any) => ({
     url: `${baseUrl}/fanzone/${org.slug}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Map live matches to sitemap entries
-  const matchEntries = liveMatches.map((match) => ({
+  const matchEntries = liveMatches.map((match: any) => ({
     url: `${baseUrl}/fanzone/default-org/matches/${match.id}`,
     lastModified: new Date(),
     changeFrequency: 'hourly' as const,

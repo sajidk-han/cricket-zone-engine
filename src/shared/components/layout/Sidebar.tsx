@@ -85,7 +85,7 @@ export function Sidebar() {
             <Link 
               key={item.name} 
               href={item.href}
-              target={'target' in item ? item.target : undefined}
+              target={'target' in item ? (item.target as React.HTMLAttributeAnchorTarget) : undefined}
               className={`
                 flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all font-medium text-sm group
                 ${isActive 

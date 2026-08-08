@@ -39,7 +39,7 @@ export default async function TournamentMatches({ params }: { params: Promise<{ 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {matches && matches.length > 0 ? matches.map((m: any) => (
           <Link key={m.id} href={`/fanzone/${orgSlug}/matches/${m.id}`} className="block transition-transform hover:-translate-y-1">
-             <MatchCard match={m} viewMode="public" />
+             <MatchCard match={m} />
           </Link>
         )) : (
           <div className="col-span-full p-12 text-center bg-bg-panel border border-border-dim rounded-2xl">

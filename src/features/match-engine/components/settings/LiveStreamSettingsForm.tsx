@@ -65,7 +65,7 @@ export function LiveStreamSettingsForm({ matchId, initialUrl }: { matchId: strin
               {isPending ? 'Saving...' : 'Save'}
             </Button>
             {initialUrl && (
-              <Button onClick={handleRemove} disabled={isPending} variant="destructive" className="px-3">
+              <Button onClick={handleRemove} disabled={isPending} variant="danger" className="px-3">
                 <Trash2 size={18} />
               </Button>
             )}

@@ -60,7 +60,7 @@ export default async function TournamentOverview({ params }: { params: Promise<{
               matches.map((m: any) => (
                 <div key={m.id} className="cursor-pointer transition-transform hover:-translate-y-1">
                   <Link href={`/fanzone/${orgSlug}/matches/${m.id}`}>
-                    <MatchCard match={m} viewMode="public" />
+                    <MatchCard match={m} />
                   </Link>
                 </div>
               ))

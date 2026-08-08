@@ -95,7 +95,7 @@ export default function SuperAdminDashboard() {
                     <td className="p-4">
                       {org.status === 'approved' && <Badge variant="success">Approved</Badge>}
                       {org.status === 'pending' && <Badge variant="warning">Pending</Badge>}
-                      {org.status === 'suspended' && <Badge variant="destructive">Suspended</Badge>}
+                      {org.status === 'suspended' && <Badge variant="danger">Suspended</Badge>}
                     </td>
                     <td className="p-4 text-right space-x-2">
                       {org.status === 'pending' && (

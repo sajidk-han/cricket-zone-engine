@@ -1,19 +1,19 @@
 "use client"
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, Variants } from 'framer-motion'
 import { Building2, Trophy, Users, Activity, Radio, BarChart3, ArrowRight } from 'lucide-react'
 
 export function WorkflowSection() {
   const steps = [
-    { id: 1, title: "Create Organization", icon: <Building2 />, desc: "Set up your district, club, or academy." },
-    { id: 2, title: "Start Tournament", icon: <Trophy />, desc: "Configure points table and brackets." },
-    { id: 3, title: "Register Teams", icon: <Users />, desc: "Add players and verify squads." },
-    { id: 4, title: "Score Matches", icon: <Activity />, desc: "Ball-by-ball live scoring interface." },
-    { id: 5, title: "Fans Watch Live", icon: <Radio />, desc: "Instant updates on the Fan Zone." },
-    { id: 6, title: "Generate Reports", icon: <BarChart3 />, desc: "Leaderboards and player stats." }
+    { id: 1, title: "Create Organization", icon: <Building2 size={32} />, desc: "Set up your district, club, or academy." },
+    { id: 2, title: "Start Tournament", icon: <Trophy size={32} />, desc: "Configure points table and brackets." },
+    { id: 3, title: "Register Teams", icon: <Users size={32} />, desc: "Add players and verify squads." },
+    { id: 4, title: "Score Matches", icon: <Activity size={32} />, desc: "Ball-by-ball live scoring interface." },
+    { id: 5, title: "Fans Watch Live", icon: <Radio size={32} />, desc: "Instant updates on the Fan Zone." },
+    { id: 6, title: "Generate Reports", icon: <BarChart3 size={32} />, desc: "Leaderboards and player stats." }
   ]
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {},
     visible: {
       transition: {
@@ -22,7 +22,7 @@ export function WorkflowSection() {
     }
   }
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
   }
@@ -80,7 +80,7 @@ export function WorkflowSection() {
             <motion.div key={step.id} variants={itemVariants} className="relative z-10 flex flex-col items-center text-center group">
               <div className="w-24 h-24 rounded-2xl bg-[#111c44] border border-[#1b2559] flex items-center justify-center text-[#8f9bba] mb-6 group-hover:bg-brand-primary group-hover:text-white group-hover:border-brand-primary group-hover:scale-110 transition-all duration-300 shadow-xl relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-white/0 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                {React.cloneElement(step.icon as React.ReactElement, { size: 32 })}
+                {step.icon}
                 
                 {/* Step Number Badge */}
                 <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-[#09090b] border-2 border-[#1b2559] flex items-center justify-center text-xs font-black text-white group-hover:border-brand-primary transition-colors">
