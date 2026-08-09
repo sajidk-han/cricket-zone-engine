@@ -296,16 +296,22 @@ export async function updateTeam(teamId: string, formData: FormData) {
 
     if (!name || !shortName) return { success: false, message: "Name and Short Name are required" }
 
-    const supabase = await createClient()
+    const orgId = await getDefaultOrgId()
+    if (!orgId) return { success: false, message: "Organization not found" }
+
+    const { createAdminClient } = await import('@/lib/supabase-server')
+    const supabase = await createAdminClient()
     
-    const { error } = await supabase
+    const { error, data } = await supabase
       .from('teams')
       .update({
         name,
         short_name: shortName.toUpperCase(),
       })
       .eq('id', teamId)
-
+      .eq('org_id', orgId)
+      .select()
+      
     if (error) throw error
 
     revalidatePath(`/teams/${teamId}`)
