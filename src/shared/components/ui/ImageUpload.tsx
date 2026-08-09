@@ -357,14 +357,8 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
               </div>
             ) : (
               <>
-                <p className="text-sm font-bold text-text-primary mb-1">
-                  <span className="text-brand-primary">Click to upload</span> or drag and drop
-                </p>
-                <p className="text-xs text-text-muted">
-                  PNG, JPG, WEBP (Max 5MB)
-                </p>
-                <p className="text-[10px] text-text-muted/60 mt-2">
-                  Auto-optimizes to ~500KB WEBP
+                <p className="text-sm font-bold text-text-primary">
+                  Upload Profile
                 </p>
               </>
             )}
