@@ -11,8 +11,9 @@ export async function searchOrganizations(query: string) {
     // Search by name or slug
     const { data, error } = await supabase
       .from('organizations')
-      .select('id, name, slug, logo_url')
+      .select('id, name, slug, logo_url, tournaments!inner(id)')
       .or(`name.ilike.%${query}%,slug.ilike.%${query}%`)
+      .is('tournaments.deleted_at', null)
       .limit(5)
       
     if (error) {

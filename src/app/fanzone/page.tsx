@@ -16,24 +16,26 @@ async function getFeaturedTournaments() {
   try {
     const supabase = await createAdminClient()
     
-    // Get active tournaments (organizations that have live/recent matches)
-    // For simplicity, we just fetch organizations that are 'approved' and have some active matches
-    // But since the query might be complex without a direct active_organizations view,
-    // we'll fetch organizations and see which ones have live matches.
+    // Only fetch organizations that have at least one active (non-deleted) tournament
     const { data: orgs, error } = await supabase
       .from('organizations')
-      .select('id, name, slug')
+      .select(`
+        id, 
+        name, 
+        slug,
+        tournaments!inner (id)
+      `)
+      .is('tournaments.deleted_at', null)
       .limit(10)
       
     if (error || !orgs) return []
 
-    // Map them with dummy live status or fetch matches
-    // Here we just return the orgs we have, marking them as active
+    // Deduplicate orgs just in case, though select on organizations should return distinct orgs
     return orgs.map((org: any) => ({
       id: org.id,
       name: org.name,
       slug: org.slug,
-      activeTournaments: 1, // Placeholder 
+      activeTournaments: org.tournaments?.length || 0,
       isLive: true
     }))
   } catch (error) {
