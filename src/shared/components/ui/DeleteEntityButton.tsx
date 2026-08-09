@@ -10,6 +10,7 @@ interface DeleteEntityButtonProps {
   confirmMessage?: string
   className?: string
   iconOnly?: boolean
+  redirectTo?: string
 }
 
 export function DeleteEntityButton({ 
@@ -17,7 +18,8 @@ export function DeleteEntityButton({
   onDelete, 
   confirmMessage = "Are you sure you want to delete this?", 
   className = "", 
-  iconOnly = false 
+  iconOnly = false,
+  redirectTo
 }: DeleteEntityButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const router = useRouter()
@@ -32,7 +34,11 @@ export function DeleteEntityButton({
         const res = await onDelete(id)
         if (res.success) {
           toast.success(res.message)
-          router.refresh()
+          if (redirectTo) {
+            router.push(redirectTo)
+          } else {
+            router.refresh()
+          }
         } else {
           toast.error(res.message)
         }

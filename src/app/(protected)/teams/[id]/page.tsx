@@ -5,7 +5,8 @@ import { Button } from '@/shared/components/ui/Button'
 import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/shared/components/ui/Table'
 import { Badge } from '@/shared/components/ui/Badge'
 import Link from 'next/link'
-import { fetchTeamById, fetchTeamRoster } from '@/app/actions/teams'
+import { DeleteEntityButton } from '@/shared/components/ui/DeleteEntityButton'
+import { fetchTeamById, fetchTeamRoster, deleteTeam } from '@/app/actions/teams'
 import { notFound } from 'next/navigation'
 import { AssignPlayerModal } from '@/features/teams/components/AssignPlayerModal'
 import { TeamPlayerActions } from '@/features/teams/components/TeamPlayerActions'
@@ -47,8 +48,14 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
             </div>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <EditTeamModal team={team} />
+          <DeleteEntityButton 
+            id={team.id} 
+            onDelete={deleteTeam} 
+            confirmMessage={`Are you sure you want to delete ${team.name}?`}
+            redirectTo="/teams"
+          />
         </div>
       </div>
 

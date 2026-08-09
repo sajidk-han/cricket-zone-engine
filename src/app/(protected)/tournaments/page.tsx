@@ -3,8 +3,7 @@ import Link from 'next/link'
 import { Plus, Trophy, Calendar, MapPin, Search, ArrowRight } from 'lucide-react'
 import { Button } from '@/shared/components/ui/Button'
 import { Card, CardContent } from '@/shared/components/ui/Card'
-import { getTournaments, deleteTournament } from '@/app/actions/tournaments'
-import { DeleteEntityButton } from '@/shared/components/ui/DeleteEntityButton'
+import { getTournaments } from '@/app/actions/tournaments'
 
 export const metadata = {
   title: 'Tournaments | CricketZone Enterprise',
@@ -105,14 +104,6 @@ async function TournamentList() {
         <Card key={t.id} className="group hover:border-green-400/50 transition-all duration-300 bg-bg-surface border-bg-elevated hover:shadow-xl hover:shadow-green-400/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <CardContent className="p-6 relative z-10 flex flex-col h-full">
-            <div className="absolute top-2 right-2 z-20">
-              <DeleteEntityButton 
-                id={t.id} 
-                onDelete={deleteTournament} 
-                confirmMessage="Are you sure you want to delete this tournament? This action is irreversible."
-                iconOnly={true}
-              />
-            </div>
             <div className="flex justify-between items-start mb-4 pr-8">
               {getStatusBadge(t.status)}
               <span className="text-xs font-medium text-text-muted bg-bg-elevated px-2 py-1 rounded-md">

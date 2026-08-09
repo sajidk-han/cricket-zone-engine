@@ -2,9 +2,20 @@ import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/Card'
 import { Button } from '@/shared/components/ui/Button'
 import { Trophy, Users, Shield, Calendar, PlayCircle } from 'lucide-react'
+import { DeleteEntityButton } from '@/shared/components/ui/DeleteEntityButton'
+import { deleteTournament, getTournamentById } from '@/app/actions/tournaments'
+import { notFound } from 'next/navigation'
 
-export default async function TournamentWorkspace({ params }: { params: { id: string } }) {
-  const tournamentId = params.id
+export default async function TournamentWorkspace({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params
+  const tournamentId = resolvedParams.id
+  const response = await getTournamentById(tournamentId)
+  
+  if (!response.success || !response.data) {
+    notFound()
+  }
+  
+  const tournament = response.data
   
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
@@ -21,19 +32,25 @@ export default async function TournamentWorkspace({ params }: { params: { id: st
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-500 border border-green-500/20 text-xs font-bold uppercase tracking-wider">
-                Ongoing
+                {tournament.status === 'draft' ? 'Draft' : 'Ongoing'}
               </span>
-              <span className="text-sm font-medium text-text-secondary">T20 Format</span>
+              <span className="text-sm font-medium text-text-secondary">{tournament.settings?.match_format?.toUpperCase() || 'T20'} Format</span>
             </div>
-            <h1 className="text-4xl font-black text-text-primary tracking-tight">Super League 2026</h1>
+            <h1 className="text-4xl font-black text-text-primary tracking-tight">{tournament.name}</h1>
             <p className="text-text-secondary mt-1 flex items-center gap-2">
-              <Calendar size={14} /> Aug 1, 2026 - Sep 15, 2026
+              <Calendar size={14} /> {tournament.start_date ? new Date(tournament.start_date).toLocaleDateString() : 'TBD'} - {tournament.end_date ? new Date(tournament.end_date).toLocaleDateString() : 'TBD'}
             </p>
           </div>
         </div>
         
-        <div className="flex gap-3 relative z-10 w-full md:w-auto">
+        <div className="flex gap-3 items-center relative z-10 w-full md:w-auto">
           <Button variant="outline" className="flex-1 md:flex-none">Edit Settings</Button>
+          <DeleteEntityButton 
+            id={tournament.id} 
+            onDelete={deleteTournament} 
+            confirmMessage={`Are you sure you want to delete ${tournament.name}?`}
+            redirectTo="/tournaments"
+          />
           <Button variant="primary" className="flex-1 md:flex-none">
             <PlayCircle size={16} className="mr-2" /> Start Live Match
           </Button>
