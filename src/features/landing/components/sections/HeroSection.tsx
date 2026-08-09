@@ -16,7 +16,7 @@ export function HeroSection() {
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0])
 
   return (
-    <section ref={containerRef} className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center">
+    <section ref={containerRef} className="relative pt-16 pb-8 md:pt-32 md:pb-20 lg:pt-48 lg:pb-32 overflow-hidden min-h-screen flex flex-col justify-center">
       
       {/* Animated Mesh Gradient Background & Particles */}
       <motion.div style={{ y, opacity }} className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -39,7 +39,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111c44]/50 backdrop-blur-md border border-[#1b2559] text-[#a3aed1] text-sm font-semibold mb-8 hover:border-brand-primary/50 hover:bg-[#1b2559] transition-colors cursor-pointer group shadow-xl"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111c44]/50 backdrop-blur-md border border-[#1b2559] text-[#a3aed1] text-sm font-semibold mb-6 md:mb-8 hover:border-brand-primary/50 hover:bg-[#1b2559] transition-colors cursor-pointer group shadow-xl"
         >
           <Activity size={16} className="text-emerald-500 animate-pulse" />
           <span className="text-white">All systems operational</span>
@@ -52,7 +52,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-5xl md:text-7xl lg:text-[5.5rem] font-black text-white tracking-tighter leading-[1.05] mb-8 max-w-5xl mx-auto"
+          className="text-4xl md:text-5xl lg:text-[5.5rem] font-black text-white tracking-tighter leading-[1.05] mb-6 md:mb-8 max-w-5xl mx-auto"
         >
           The Enterprise Platform for <br className="hidden md:block"/>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-accent to-emerald-400 animate-gradient bg-[length:200%_auto]">Modern Cricket Tournaments.</span>
@@ -63,7 +63,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-xl md:text-2xl text-[#a3aed1] mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+          className="text-lg md:text-2xl text-[#a3aed1] mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
         >
           Manage matches, score live, engage fans, and scale your cricket tournaments from one powerful, cloud-native platform.
         </motion.p>
@@ -76,14 +76,14 @@ export function HeroSection() {
           className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6"
         >
           <Link href="/fanzone" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto rounded-full px-8 py-4 text-lg font-bold bg-brand-primary text-white shadow-lg shadow-brand-primary/25 hover:shadow-brand-primary/50 hover:-translate-y-1 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group ring-2 ring-transparent hover:ring-brand-primary/50 relative overflow-hidden focus:outline-none">
+            <button className="w-full sm:w-auto rounded-full px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-bold bg-brand-primary text-white shadow-lg shadow-brand-primary/25 hover:shadow-brand-primary/50 hover:-translate-y-1 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 group ring-2 ring-transparent hover:ring-brand-primary/50 relative overflow-hidden focus:outline-none">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out"></div>
               <Play size={20} fill="currentColor" />
               Explore Fan Zone
             </button>
           </Link>
           <Link href="/register" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto rounded-full px-8 py-4 text-lg font-bold border border-[#a3aed1]/30 hover:border-brand-accent/50 bg-[#111c44]/50 hover:bg-[#1b2559] text-white backdrop-blur-md hover:-translate-y-1 transition-all duration-300 shadow-xl group flex items-center justify-center focus:outline-none">
+            <button className="w-full sm:w-auto rounded-full px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-bold border border-[#a3aed1]/30 hover:border-brand-accent/50 bg-[#111c44]/50 hover:bg-[#1b2559] text-white backdrop-blur-md hover:-translate-y-1 transition-all duration-300 shadow-xl group flex items-center justify-center focus:outline-none">
               Start a Tournament
               <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
