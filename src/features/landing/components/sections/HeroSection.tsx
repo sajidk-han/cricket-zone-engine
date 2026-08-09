@@ -95,7 +95,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 100 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5, type: "spring", bounce: 0.2 }}
-          className="mt-20 relative mx-auto max-w-[1000px] w-full"
+          className="mt-20 relative mx-auto max-w-[1000px] w-full hidden md:block"
         >
           <div className="relative rounded-2xl md:rounded-t-3xl overflow-hidden border border-[#1b2559]/50 bg-[#0f1115] shadow-2xl shadow-brand-primary/20 ring-1 ring-white/5">
             {/* Mockup Header */}
