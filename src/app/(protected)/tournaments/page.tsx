@@ -47,14 +47,14 @@ function EmptyState() {
       <p className="text-text-secondary max-w-md mb-8">
         Get started by creating your first tournament. Set up formats, manage teams, and schedule matches all in one place.
       </p>
-      <div className="flex gap-4">
-        <Link href="/tournaments/new">
-          <Button variant="primary" className="gap-2">
+      <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto max-w-sm sm:max-w-none">
+        <Link href="/tournaments/new" className="w-full sm:w-auto">
+          <Button variant="primary" className="gap-2 w-full">
             <Plus size={18} /> Create Tournament
           </Button>
         </Link>
-        <Link href="https://docs.cricketzone.com/tournaments" target="_blank" rel="noreferrer">
-          <Button variant="outline">Read Documentation</Button>
+        <Link href="https://docs.cricketzone.com/tournaments" target="_blank" rel="noreferrer" className="w-full sm:w-auto">
+          <Button variant="outline" className="w-full">Read Documentation</Button>
         </Link>
       </div>
     </div>
