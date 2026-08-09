@@ -34,6 +34,9 @@ export async function createPlayer(formData: FormData) {
 
     if (!fullName) return { success: false, message: "Full Name is required" }
 
+    const slugBase = fullName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+    const slug = `${slugBase}-${Math.random().toString(36).substring(2, 8)}`
+
     const supabase = await createClient()
     
     const { data: newPlayer, error } = await supabase
@@ -45,7 +48,8 @@ export async function createPlayer(formData: FormData) {
         batting_style: battingStyle !== 'none' ? battingStyle : null,
         bowling_style: bowlingStyle !== 'none' ? bowlingStyle : null,
         avatar_url: avatarUrl,
-        avatar_updated_at: avatarUrl ? new Date().toISOString() : null
+        avatar_updated_at: avatarUrl ? new Date().toISOString() : null,
+        slug: slug
       }])
       .select('id')
       .single()
