@@ -317,8 +317,6 @@ export async function updateLiveStreamUrl(matchId: string, url: string | null): 
       .from('matches')
       .select('org_id')
       .eq('id', matchId)
-      .is('team1.deleted_at', null)
-      .is('team2.deleted_at', null)
       .single()
       
     if (fetchError || !match) {
