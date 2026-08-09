@@ -17,7 +17,7 @@ export default async function MatchScoringPage({ params }: { params: Promise<{ i
   )
 }
 
-async function fetchPlayingXI(matchId: string) {
+async function fetchPlayingXI(matchId: string, team1Id?: string, team2Id?: string) {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('match_playing_xi')
@@ -25,8 +25,29 @@ async function fetchPlayingXI(matchId: string) {
     .eq('match_id', matchId)
     .order('batting_position', { ascending: true })
 
-  if (error) return []
-  return data || []
+  if (data && data.length > 0) return data;
+
+  // Fallback: If no playing XI is set (since the feature is under development),
+  // fetch all players from both teams' rosters.
+  if (team1Id && team2Id) {
+    const { data: teamPlayers } = await supabase
+      .from('team_players')
+      .select(`id, team_id, player:players!inner(id, full_name)`)
+      .in('team_id', [team1Id, team2Id])
+      
+    if (teamPlayers) {
+      return teamPlayers.map((tp, idx) => ({
+        id: tp.id,
+        team_id: tp.team_id,
+        batting_position: idx + 1,
+        is_captain: false,
+        is_wicket_keeper: false,
+        player: tp.player
+      }))
+    }
+  }
+
+  return []
 }
 
 async function fetchCurrentInnings(matchId: string, currentInningsNum: number) {
@@ -110,7 +131,7 @@ async function fetchBowlerStats(inningsId: string, bowlerId: string | undefined)
 
 async function LiveConsoleFetchWrapper({ match }: { match: any }) {
   const [playingXi, currentInnings] = await Promise.all([
-    fetchPlayingXI(match.id),
+    fetchPlayingXI(match.id, match.team1_id, match.team2_id),
     fetchCurrentInnings(match.id, match.current_innings || 1)
   ])
 
