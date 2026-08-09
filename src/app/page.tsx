@@ -34,17 +34,19 @@ export default function LandingPage() {
       
       <main>
         <HeroSection />
-        <TrustSection />
-        <ProductCarouselSection />
-        <StatsSection />
-        <FeaturesSection />
-        <ComparisonSection />
-        <SecuritySection />
-        <FanZoneSection />
-        <PlatformSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <CTASection />
+        <div className="hidden md:block">
+          <TrustSection />
+          <ProductCarouselSection />
+          <StatsSection />
+          <FeaturesSection />
+          <ComparisonSection />
+          <SecuritySection />
+          <FanZoneSection />
+          <PlatformSection />
+          <TestimonialsSection />
+          <FAQSection />
+          <CTASection />
+        </div>
       </main>
 
       <Footer />
