@@ -67,13 +67,13 @@ export default async function DashboardPage() {
               <CardTitle className="text-lg">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
-              <Link href="/teams/new" className="p-4 rounded-xl border border-bg-elevated hover:bg-bg-elevated/50 transition-colors flex flex-col items-center justify-center text-center gap-2 group">
+              <Link href="/teams" className="p-4 rounded-xl border border-bg-elevated hover:bg-bg-elevated/50 transition-colors flex flex-col items-center justify-center text-center gap-2 group">
                 <div className="w-10 h-10 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary group-hover:scale-110 transition-transform">
                   <Shield size={20} />
                 </div>
                 <span className="text-sm font-medium text-text-primary">Add Team</span>
               </Link>
-              <Link href="/players/new" className="p-4 rounded-xl border border-bg-elevated hover:bg-bg-elevated/50 transition-colors flex flex-col items-center justify-center text-center gap-2 group">
+              <Link href="/players" className="p-4 rounded-xl border border-bg-elevated hover:bg-bg-elevated/50 transition-colors flex flex-col items-center justify-center text-center gap-2 group">
                 <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                   <User size={20} />
                 </div>
