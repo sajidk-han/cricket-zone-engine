@@ -37,6 +37,7 @@ export function parseLiveStreamUrl(url: string | null | undefined): ParsedLiveSt
         parsedUrl.pathname.includes('/videos/') || 
         parsedUrl.pathname.includes('/live/') || 
         parsedUrl.pathname.includes('/watch') ||
+        parsedUrl.pathname.includes('/share/') ||
         parsedUrl.hostname.includes('fb.watch')
       ) {
         // Facebook's official iframe embed uses plugins/video.php
