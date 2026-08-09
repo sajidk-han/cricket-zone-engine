@@ -42,15 +42,23 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
   const team1Id = match?.team1_id
   const team2Id = match?.team2_id
 
-  // Determine current batting and bowling teams based on Toss (for Innings 1)
-  const isTeam1Batting = (tossWinnerId === team1Id && tossDecision === 'bat') || (tossWinnerId === team2Id && tossDecision === 'bowl')
-  const battingTeamId = isTeam1Batting ? team1Id : team2Id
-  const bowlingTeamId = isTeam1Batting ? team2Id : team1Id
+  // Determine default batting and bowling teams based on Toss (for Innings 1)
+  const isTeam1BattingDefault = (tossWinnerId === team1Id && tossDecision === 'bat') || (tossWinnerId === team2Id && tossDecision === 'bowl')
+  const defaultBattingTeamId = isTeam1BattingDefault ? team1Id : team2Id
+  const defaultBowlingTeamId = isTeam1BattingDefault ? team2Id : team1Id
+
+  // Initialization State
+  const [selectedBattingTeamId, setSelectedBattingTeamId] = useState<string>(defaultBattingTeamId)
+  const [selectedBowlingTeamId, setSelectedBowlingTeamId] = useState<string>(defaultBowlingTeamId)
+  
+  const battingTeamId = currentInnings ? currentInnings.batting_team_id : selectedBattingTeamId
+  const bowlingTeamId = currentInnings ? currentInnings.bowling_team_id : selectedBowlingTeamId
+  
+  const isTeam1Batting = battingTeamId === team1Id
 
   const battingXi = playingXi.filter(p => p.team_id === battingTeamId)
   const bowlingXi = playingXi.filter(p => p.team_id === bowlingTeamId)
 
-  // Initialization State
   const [strikerId, setStrikerId] = useState<string>('')
   const [nonStrikerId, setNonStrikerId] = useState<string>('')
   const [bowlerId, setBowlerId] = useState<string>('')
@@ -264,6 +272,45 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
         <h2 className="text-2xl font-bold text-text-primary mb-6">Initialize Innings 1</h2>
         
         <div className="w-full space-y-6">
+          {/* Team Assignment */}
+          <div className="space-y-4 pb-2 border-b border-bg-elevated">
+            <h3 className="text-sm font-bold text-text-secondary uppercase">Match Roles</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-text-muted mb-1">Batting Team</label>
+                <select 
+                  className="w-full bg-bg-base border border-bg-elevated rounded p-2 text-brand-primary font-semibold"
+                  value={selectedBattingTeamId}
+                  onChange={(e) => {
+                    setSelectedBattingTeamId(e.target.value)
+                    if (e.target.value === selectedBowlingTeamId) {
+                      setSelectedBowlingTeamId(e.target.value === team1Id ? team2Id : team1Id)
+                    }
+                  }}
+                >
+                  <option value={team1Id}>{team1?.name}</option>
+                  <option value={team2Id}>{team2?.name}</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-text-muted mb-1">Bowling Team</label>
+                <select 
+                  className="w-full bg-bg-base border border-bg-elevated rounded p-2 text-rose-500 font-semibold"
+                  value={selectedBowlingTeamId}
+                  onChange={(e) => {
+                    setSelectedBowlingTeamId(e.target.value)
+                    if (e.target.value === selectedBattingTeamId) {
+                      setSelectedBattingTeamId(e.target.value === team1Id ? team2Id : team1Id)
+                    }
+                  }}
+                >
+                  <option value={team1Id}>{team1?.name}</option>
+                  <option value={team2Id}>{team2?.name}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-1">
               <h3 className="text-sm font-bold text-text-secondary uppercase">Opening Batters</h3>
