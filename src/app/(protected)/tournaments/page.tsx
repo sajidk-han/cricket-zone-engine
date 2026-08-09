@@ -53,7 +53,7 @@ function EmptyState() {
             <Plus size={18} /> Create Tournament
           </Button>
         </Link>
-        <Link href="https://docs.cricketzone.com/tournaments" target="_blank" rel="noreferrer" className="w-full sm:w-auto">
+        <Link href="/docs" className="w-full sm:w-auto">
           <Button variant="outline" className="w-full">Read Documentation</Button>
         </Link>
       </div>
