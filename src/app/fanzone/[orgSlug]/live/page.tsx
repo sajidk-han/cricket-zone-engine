@@ -23,6 +23,7 @@ async function fetchPublicMatches(orgSlug: string) {
       innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
     `)
     .eq('org_id', org.id)
+    .is('deleted_at', null)
     .order('scheduled_time', { ascending: true })
 
   if (error) {
