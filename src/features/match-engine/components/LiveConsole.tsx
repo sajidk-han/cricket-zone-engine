@@ -265,7 +265,10 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
         
         <div className="w-full space-y-6">
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-text-secondary uppercase">Opening Batters</h3>
+            <div className="flex justify-between items-center mb-1">
+              <h3 className="text-sm font-bold text-text-secondary uppercase">Opening Batters</h3>
+              <span className="text-sm font-semibold text-brand-primary">{isTeam1Batting ? team1?.name : team2?.name} (Batting)</span>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-text-muted mb-1">Striker</label>
@@ -293,7 +296,10 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
           </div>
 
           <div className="space-y-4 pt-4 border-t border-bg-elevated">
-            <h3 className="text-sm font-bold text-text-secondary uppercase">Opening Bowler</h3>
+            <div className="flex justify-between items-center mb-1">
+              <h3 className="text-sm font-bold text-text-secondary uppercase">Opening Bowler</h3>
+              <span className="text-sm font-semibold text-rose-500">{!isTeam1Batting ? team1?.name : team2?.name} (Bowling)</span>
+            </div>
             <div>
               <label className="block text-sm text-text-muted mb-1">Bowler</label>
               <select 
