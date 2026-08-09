@@ -67,17 +67,19 @@ export default async function DashboardPage() {
               <CardTitle className="text-lg">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
-              <Link href="/teams" className="p-4 rounded-xl border border-bg-elevated hover:bg-bg-elevated/50 transition-colors flex flex-col items-center justify-center text-center gap-2 group">
-                <div className="w-10 h-10 rounded-full bg-brand-secondary/10 flex items-center justify-center text-brand-secondary group-hover:scale-110 transition-transform">
-                  <Shield size={20} />
+              <Link href="/teams" className="p-4 rounded-xl border border-brand-secondary/30 bg-gradient-to-br from-brand-secondary/10 to-transparent hover:from-brand-secondary/20 hover:border-brand-secondary/50 shadow-[0_4px_14px_0_rgba(16,185,129,0.1)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.2)] hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center text-center gap-3 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-brand-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="w-12 h-12 rounded-full bg-brand-secondary/20 flex items-center justify-center text-brand-secondary group-hover:scale-110 group-hover:bg-brand-secondary group-hover:text-white transition-all duration-300 z-10 shadow-lg">
+                  <Shield size={22} />
                 </div>
-                <span className="text-sm font-medium text-text-primary">Add Team</span>
+                <span className="text-sm font-bold text-text-primary z-10 group-hover:text-brand-secondary transition-colors">Add Team</span>
               </Link>
-              <Link href="/players" className="p-4 rounded-xl border border-bg-elevated hover:bg-bg-elevated/50 transition-colors flex flex-col items-center justify-center text-center gap-2 group">
-                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                  <User size={20} />
+              <Link href="/players" className="p-4 rounded-xl border border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-transparent hover:from-blue-500/20 hover:border-blue-500/50 shadow-[0_4px_14px_0_rgba(59,130,246,0.1)] hover:shadow-[0_6px_20px_rgba(59,130,246,0.2)] hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center text-center gap-3 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 z-10 shadow-lg">
+                  <User size={22} />
                 </div>
-                <span className="text-sm font-medium text-text-primary">Add Player</span>
+                <span className="text-sm font-bold text-text-primary z-10 group-hover:text-blue-400 transition-colors">Add Player</span>
               </Link>
             </CardContent>
           </Card>
