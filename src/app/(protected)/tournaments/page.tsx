@@ -4,6 +4,7 @@ import { Plus, Trophy, Calendar, MapPin, Search, ArrowRight } from 'lucide-react
 import { Button } from '@/shared/components/ui/Button'
 import { Card, CardContent } from '@/shared/components/ui/Card'
 import { getTournaments } from '@/app/actions/tournaments'
+import { TournamentCard } from './client'
 
 export const metadata = {
   title: 'Tournaments | CricketZone Enterprise',
@@ -101,37 +102,7 @@ async function TournamentList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
       {tournaments.map((t: any) => (
-        <Card key={t.id} className="group hover:border-green-400/50 transition-all duration-300 bg-bg-surface border-bg-elevated hover:shadow-xl hover:shadow-green-400/5 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <CardContent className="p-6 relative z-10 flex flex-col h-full">
-            <div className="flex justify-between items-start mb-4 pr-8">
-              {getStatusBadge(t.status)}
-              <span className="text-xs font-medium text-text-muted bg-bg-elevated px-2 py-1 rounded-md">
-                {t.settings?.match_format?.toUpperCase() || 'T20'}
-              </span>
-            </div>
-            
-            <h3 className="text-xl font-bold text-text-primary mb-2 line-clamp-1">{t.name}</h3>
-            
-            <div className="flex flex-col gap-2 mb-6 flex-1">
-              {t.start_date && (
-                <div className="flex items-center gap-2 text-sm text-text-secondary">
-                  <Calendar size={14} className="opacity-70" />
-                  <span>{new Date(t.start_date).toLocaleDateString()} - {t.end_date ? new Date(t.end_date).toLocaleDateString() : 'TBD'}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-5 border-t border-bg-elevated/50 flex justify-center items-center w-full mt-auto">
-              <Link href={`/tournaments/${t.id}/dashboard`} className="w-full">
-                <button className="w-full h-11 bg-brand-primary hover:bg-brand-primary/90 text-bg-base font-bold text-sm rounded-lg transition-all duration-200 shadow-[0_4px_14px_0_rgba(34,197,94,0.39)] hover:shadow-[0_6px_20px_rgba(34,197,94,0.23)] hover:-translate-y-0.5 flex items-center justify-center gap-2 group">
-                  Manage Workspace
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+        <TournamentCard key={t.id} t={t} />
       ))}
     </div>
   )

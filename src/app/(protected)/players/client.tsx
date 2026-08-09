@@ -1,15 +1,20 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useTransition } from 'react'
 import { Card, CardContent } from '@/shared/components/ui/Card'
 import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/shared/components/ui/Table'
 import { Badge } from '@/shared/components/ui/Badge'
 import Link from 'next/link'
 import { CreatePlayerDrawer } from '@/features/players/components/CreatePlayerDrawer'
+import { OptimizedImage } from '@/features/fanzone/components/OptimizedImage'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast'
 
 export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any[] }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('All Roles')
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
 
   // Filter logic
   const filteredPlayers = initialPlayers.filter(player => {
@@ -73,12 +78,17 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
                 <TableRow key={player.id} className="border-bg-elevated hover:bg-bg-elevated/30 transition-colors">
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-bg-elevated flex items-center justify-center text-sm font-bold text-text-primary overflow-hidden">
-                        {player.avatar_url ? <img src={player.avatar_url} className="w-full h-full object-cover" /> : player.full_name.charAt(0)}
+                      <div className="w-10 h-10 rounded-full bg-bg-elevated flex items-center justify-center text-sm font-bold text-text-primary overflow-hidden relative">
+                        <OptimizedImage
+                          src={player.avatar_url}
+                          alt={player.full_name}
+                          fallbackInitials={player.full_name.charAt(0)}
+                          fill
+                          className="rounded-full"
+                        />
                       </div>
                       <div>
                         <div className="font-bold text-text-primary">{player.full_name}</div>
-                        <div className="text-xs text-text-secondary font-mono">{player.id.split('-')[0]}</div>
                       </div>
                     </div>
                   </TableCell>
@@ -108,13 +118,17 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
                             const { deletePlayer } = await import('@/app/actions/players')
                             const res = await deletePlayer(player.id)
                             if(res.success) {
-                              window.location.reload()
+                              toast.success('Player deleted successfully')
+                              startTransition(() => {
+                                router.refresh()
+                              })
                             } else {
-                              alert(res.message)
+                              toast.error(res.message)
                             }
                           }
                         }}
-                        className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors"
+                        disabled={isPending}
+                        className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
                       >
                         Delete
                       </button>

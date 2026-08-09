@@ -22,10 +22,13 @@ export default async function TournamentStandings({ params }: { params: Promise<
   if (error || !tournament) notFound()
 
   const { data: standings } = await supabase
-    .from('tournament_standings')
-    .select('team_id, matches_played, matches_won, matches_lost, matches_tied, no_result, points, net_run_rate, runs_for, overs_faced, runs_against, overs_bowled, teams(name)')
+    .from('tournament_standings_cache')
+    .select(`
+      team_id, played, won, lost, tied, no_result, points, nrr,
+      team:teams(name, short_name, logo_url)
+    `)
     .eq('tournament_id', tournament.id)
-    .order('points', { ascending: false })
+    .order('position', { ascending: true })
     .order('net_run_rate', { ascending: false })
 
   return (
@@ -58,21 +61,32 @@ export default async function TournamentStandings({ params }: { params: Promise<
                 standings.map((row: any, i: number) => (
                   <tr key={row.team_id} className="hover:bg-bg-base/30 transition-colors group">
                     <td className="p-4 text-center text-text-muted font-medium">{i + 1}</td>
-                    <td className="p-4 font-semibold text-text-primary">{row.teams?.name}</td>
-                    <td className="p-4 text-center text-text-secondary">{row.matches_played}</td>
-                    <td className="p-4 text-center text-green-500 font-medium">{row.matches_won}</td>
-                    <td className="p-4 text-center text-red-500 font-medium">{row.matches_lost}</td>
-                    <td className="p-4 text-center text-text-secondary">{row.matches_tied}</td>
+                    <td className="p-4 font-semibold text-text-primary">
+                      <div className="flex items-center gap-3">
+                        <div className="w-6 h-6 rounded-full bg-bg-elevated flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {row.team?.logo_url ? (
+                            <img src={row.team.logo_url} alt={row.team.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-bold">{row.team?.short_name || 'T'}</span>
+                          )}
+                        </div>
+                        {row.team?.name}
+                      </div>
+                    </td>
+                    <td className="p-4 text-center text-text-secondary">{row.played}</td>
+                    <td className="p-4 text-center text-green-500 font-medium">{row.won}</td>
+                    <td className="p-4 text-center text-red-500 font-medium">{row.lost}</td>
+                    <td className="p-4 text-center text-yellow-500">{row.tied}</td>
                     <td className="p-4 text-center text-text-secondary">{row.no_result}</td>
                     <td className="p-4 text-center font-bold text-brand-primary text-lg">{row.points}</td>
                     <td className="p-4 text-center text-text-secondary font-medium">
-                      {row.net_run_rate > 0 ? '+' : ''}{Number(row.net_run_rate).toFixed(3)}
+                      {row.nrr > 0 ? '+' : ''}{Number(row.nrr || 0).toFixed(3)}
                     </td>
                     <td className="p-4 text-center text-text-muted text-xs hidden md:table-cell">
-                      {row.runs_for}/{Number(row.overs_faced).toFixed(1)}
+                      {row.runs_for || 0}/{Number(row.overs_for || 0).toFixed(1)}
                     </td>
                     <td className="p-4 text-center text-text-muted text-xs hidden md:table-cell">
-                      {row.runs_against}/{Number(row.overs_bowled).toFixed(1)}
+                      {row.runs_against || 0}/{Number(row.overs_against || 0).toFixed(1)}
                     </td>
                   </tr>
                 ))

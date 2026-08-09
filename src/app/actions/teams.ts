@@ -39,13 +39,37 @@ export async function createTeam(formData: FormData) {
   return data
 }
 
+export async function fetchTeamMatches(teamId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('matches')
+    .select(`
+      *,
+      team1:team1_id (id, name, short_name, logo_url),
+      team2:team2_id (id, name, short_name, logo_url),
+      tournament:tournament_id (id, name)
+    `)
+    .or(`team1_id.eq.${teamId},team2_id.eq.${teamId}`)
+    .is('deleted_at', null)
+    .order('scheduled_time', { ascending: false })
+
+  if (error) {
+    console.error('Fetch team matches error:', error)
+    return []
+  }
+
+  return data
+}
+
 export async function deleteTeam(teamId: string) {
   try {
-    const supabase = await createClient()
+    const orgId = await getDefaultOrgId()
+    const supabase = await createAdminClient()
     const { error } = await supabase
       .from('teams')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', teamId)
+      .eq('org_id', orgId)
 
     if (error) throw error
 
@@ -136,6 +160,7 @@ export async function fetchTeams() {
   const { data, error } = await supabase
     .from('teams')
     .select('*')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -152,6 +177,7 @@ export async function fetchTeamById(id: string) {
     .from('teams')
     .select('*')
     .eq('id', id)
+    .is('deleted_at', null)
     .limit(1)
 
   if (error) {
@@ -172,7 +198,7 @@ export async function fetchTeamRoster(teamId: string) {
       id,
       role,
       jersey_number,
-      player:players (
+      player:players!inner (
         id,
         full_name,
         primary_role,
@@ -181,6 +207,7 @@ export async function fetchTeamRoster(teamId: string) {
       )
     `)
     .eq('team_id', teamId)
+    .is('player.deleted_at', null)
     .order('created_at', { ascending: true })
 
   if (error) {

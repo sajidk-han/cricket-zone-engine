@@ -124,11 +124,13 @@ export async function fetchTournamentMatches(tournamentId: string) {
     .from('matches')
     .select(`
       *,
-      team1:teams!team1_id(id, name, short_name, logo_url),
-      team2:teams!team2_id(id, name, short_name, logo_url),
+      team1:teams!inner!team1_id(id, name, short_name, logo_url),
+      team2:teams!inner!team2_id(id, name, short_name, logo_url),
       ground:grounds(id, name)
     `)
     .eq('tournament_id', tournamentId)
+    .is('team1.deleted_at', null)
+    .is('team2.deleted_at', null)
     .order('scheduled_time', { ascending: true })
 
   if (error) {
@@ -152,13 +154,14 @@ export async function getMatchSummary(matchId: string) {
     .select(`
       id, status, scheduled_time, match_type, scheduled_overs, 
       team1_id, team2_id, toss_winner_id, toss_decision, current_innings, current_version, match_statistics, live_stream_url,
-      team1:teams!team1_id(id, name, short_name, logo_url),
-      team2:teams!team2_id(id, name, short_name, logo_url),
+      team1:teams!inner!team1_id(id, name, short_name, logo_url),
+      team2:teams!inner!team2_id(id, name, short_name, logo_url),
       ground:grounds(id, name),
       tournament:tournaments(id, name)
     `)
     .eq('id', matchId)
-    .limit(1)
+    .is('team1.deleted_at', null)
+    .is('team2.deleted_at', null)
     .single()
 
   if (error) {
@@ -314,6 +317,8 @@ export async function updateLiveStreamUrl(matchId: string, url: string | null): 
       .from('matches')
       .select('org_id')
       .eq('id', matchId)
+      .is('team1.deleted_at', null)
+      .is('team2.deleted_at', null)
       .single()
       
     if (fetchError || !match) {

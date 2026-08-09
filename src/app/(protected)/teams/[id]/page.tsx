@@ -6,7 +6,7 @@ import { Table, TableHeader, TableRow, TableHead, TableCell } from '@/shared/com
 import { Badge } from '@/shared/components/ui/Badge'
 import Link from 'next/link'
 import { DeleteEntityButton } from '@/shared/components/ui/DeleteEntityButton'
-import { fetchTeamById, fetchTeamRoster, deleteTeam } from '@/app/actions/teams'
+import { fetchTeamById, fetchTeamRoster, deleteTeam, fetchTeamMatches } from '@/app/actions/teams'
 import { notFound } from 'next/navigation'
 import { AssignPlayerModal } from '@/features/teams/components/AssignPlayerModal'
 import { TeamPlayerActions } from '@/features/teams/components/TeamPlayerActions'
@@ -23,6 +23,21 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
   }
 
   const roster = await fetchTeamRoster(teamId)
+  const matches = await fetchTeamMatches(teamId)
+
+  // Compute stats
+  const stats = { won: 0, lost: 0, tied: 0 }
+  matches.forEach((m: any) => {
+    if (m.status === 'completed' || m.status === 'verified' || m.status === 'archived') {
+      if (m.winning_team_id === teamId) {
+        stats.won++
+      } else if (m.winning_team_id) {
+        stats.lost++
+      } else {
+        stats.tied++
+      }
+    }
+  })
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -111,26 +126,84 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
         </TabsContent>
 
         <TabsContent value="history">
-          <div className="mt-6">
-            <Card>
-              <CardContent className="p-10 text-center">
-                <span className="text-4xl mb-4 block">📈</span>
-                <p className="text-lg font-bold">Match History</p>
-                <p className="text-text-secondary">Matches played by {team.name} will appear here.</p>
-              </CardContent>
-            </Card>
+          <div className="mt-6 space-y-4">
+            <h2 className="text-xl font-bold">Match History</h2>
+            {matches.length === 0 ? (
+              <Card>
+                <CardContent className="p-10 text-center">
+                  <span className="text-4xl mb-4 block">📈</span>
+                  <p className="text-lg font-bold">No Matches Yet</p>
+                  <p className="text-text-secondary">Matches played by {team.name} will appear here.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-4">
+                {matches.map((match: any) => (
+                  <Card key={match.id} className="hover:border-brand-primary/50 transition-colors">
+                    <CardContent className="p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+                      <div className="flex-1 flex justify-between items-center w-full">
+                        <div className="text-center flex-1">
+                          <p className="font-bold text-lg">{match.team1?.short_name}</p>
+                        </div>
+                        <div className="px-4 text-center">
+                          <Badge variant="outline" className="mb-1">{match.status}</Badge>
+                          <p className="text-xs text-text-secondary">vs</p>
+                        </div>
+                        <div className="text-center flex-1">
+                          <p className="font-bold text-lg">{match.team2?.short_name}</p>
+                        </div>
+                      </div>
+                      <div className="text-sm text-text-secondary whitespace-nowrap text-right">
+                        <p>{match.tournament?.name}</p>
+                        <p>{new Date(match.scheduled_time || match.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="stats">
-          <div className="mt-6">
-            <Card>
-              <CardContent className="p-10 text-center">
-                <span className="text-4xl mb-4 block">📊</span>
-                <p className="text-lg font-bold">Team Stats</p>
-                <p className="text-text-secondary">Detailed analytics will appear once the team plays a match.</p>
-              </CardContent>
-            </Card>
+          <div className="mt-6 space-y-6">
+            <h2 className="text-xl font-bold">Team Statistics</h2>
+            {matches.length === 0 ? (
+              <Card>
+                <CardContent className="p-10 text-center">
+                  <span className="text-4xl mb-4 block">📊</span>
+                  <p className="text-lg font-bold">No Stats Available</p>
+                  <p className="text-text-secondary">Detailed analytics will appear once the team plays a match.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <p className="text-text-secondary text-sm font-medium uppercase tracking-wider mb-1">Matches Played</p>
+                    <p className="text-4xl font-black text-text-primary">{matches.length}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-6 text-center border-b-4 border-green-500">
+                    <p className="text-text-secondary text-sm font-medium uppercase tracking-wider mb-1">Won</p>
+                    <p className="text-4xl font-black text-green-500">{stats.won}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-6 text-center border-b-4 border-red-500">
+                    <p className="text-text-secondary text-sm font-medium uppercase tracking-wider mb-1">Lost</p>
+                    <p className="text-4xl font-black text-red-500">{stats.lost}</p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-6 text-center border-b-4 border-yellow-500">
+                    <p className="text-text-secondary text-sm font-medium uppercase tracking-wider mb-1">Tied/NR</p>
+                    <p className="text-4xl font-black text-yellow-500">{stats.tied}</p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

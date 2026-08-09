@@ -192,6 +192,10 @@ export default function FanZoneMatchPage() {
             return [...prev, payload.new]
          })
       })
+      // Listen to Ball Deletions (Undo functionality)
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'ball_events' }, (payload) => {
+         setBallEvents(prev => prev.filter(b => b.id !== payload.old.id))
+      })
       .subscribe()
 
     return () => {

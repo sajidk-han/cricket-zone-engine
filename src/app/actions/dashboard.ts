@@ -10,8 +10,8 @@ export async function fetchDashboardStats() {
     { count: liveMatches }
   ] = await Promise.all([
     supabase.from('tournaments').select('*', { count: 'exact', head: true }).in('status', ['scheduled', 'ongoing']),
-    supabase.from('teams').select('*', { count: 'exact', head: true }),
-    supabase.from('players').select('*', { count: 'exact', head: true }),
+    supabase.from('teams').select('*', { count: 'exact', head: true }).is('deleted_at', null),
+    supabase.from('players').select('*', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('matches').select('*', { count: 'exact', head: true }).eq('status', 'live')
   ])
 
@@ -33,7 +33,7 @@ export async function fetchDashboardStats() {
     { data: recentPlayers }
   ] = await Promise.all([
     supabase.from('matches').select('created_at').gte('created_at', sevenDaysAgoIso),
-    supabase.from('players').select('created_at').gte('created_at', sevenDaysAgoIso)
+    supabase.from('players').select('created_at').gte('created_at', sevenDaysAgoIso).is('deleted_at', null)
   ])
 
   // Group by day for the last 7 days

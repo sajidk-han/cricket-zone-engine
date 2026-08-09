@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { UserPlus } from 'lucide-react'
 import { Button } from '@/shared/components/ui/Button'
 import { Drawer } from '@/shared/components/ui/Drawer'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { createPlayer } from '@/app/actions/players'
+import { createPlayer, uploadPlayerAvatar, updatePlayer } from '@/app/actions/players'
+import { ImageUpload, ImageUploadHandle } from '@/shared/components/ui/ImageUpload'
 
 export function CreatePlayerDrawer({ 
   trigger,
@@ -20,6 +21,7 @@ export function CreatePlayerDrawer({
   const [internalIsOpen, setInternalIsOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
+  const imageUploadRef = useRef<ImageUploadHandle>(null)
 
   const isOpen = open !== undefined ? open : internalIsOpen
   const setIsOpen = (val: boolean) => {
@@ -33,9 +35,27 @@ export function CreatePlayerDrawer({
     
     try {
       const formData = new FormData(e.currentTarget)
+      
+      // 1. Create player first
       const res = await createPlayer(formData)
       
-      if (res.success) {
+      if (res.success && res.playerId && res.orgId) {
+        // 2. If there's an image, upload it
+        if (imageUploadRef.current?.hasFile()) {
+          const publicUrl = await imageUploadRef.current.upload(res.orgId, res.playerId)
+          if (publicUrl) {
+            // 3. Update player with avatar URL
+            const updateForm = new FormData()
+            updateForm.append('fullName', formData.get('fullName') as string)
+            updateForm.append('role', formData.get('role') as string)
+            updateForm.append('battingStyle', formData.get('battingStyle') as string)
+            updateForm.append('bowlingStyle', formData.get('bowlingStyle') as string)
+            updateForm.append('avatarUrl', publicUrl)
+            
+            await updatePlayer(res.playerId, updateForm)
+          }
+        }
+        
         toast.success(res.message)
         setIsOpen(false)
         router.refresh()
@@ -72,6 +92,18 @@ export function CreatePlayerDrawer({
           </div>
 
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-2">
+                Player Photo
+              </label>
+              <ImageUpload
+                ref={imageUploadRef}
+                bucketName="player-avatars"
+                serverUploadAction={uploadPlayerAvatar}
+                className="w-32 h-32 mx-auto rounded-full"
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">
                 Full Name <span className="text-red-500">*</span>

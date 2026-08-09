@@ -19,6 +19,7 @@ export function EditPlayerForm({ player }: EditPlayerFormProps) {
     
     try {
       const formData = new FormData(e.currentTarget)
+
       const res = await updatePlayer(player.id, formData)
       
       if (res.success) {
@@ -40,6 +41,7 @@ export function EditPlayerForm({ player }: EditPlayerFormProps) {
       </CardHeader>
       <CardContent className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
+
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-1">
               Full Name <span className="text-red-500">*</span>

@@ -7,6 +7,9 @@ import Link from 'next/link'
 import { Button } from '@/shared/components/ui/Button'
 import { EditPlayerForm } from '@/features/players/components/EditPlayerForm'
 
+import { OptimizedImage } from '@/features/fanzone/components/OptimizedImage'
+import { EditableAvatar } from '@/features/players/components/EditableAvatar'
+
 export default async function PlayerProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const supabase = await createClient()
@@ -36,9 +39,12 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay pointer-events-none"></div>
         <CardContent className="p-8 md:p-12">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-bg-elevated flex items-center justify-center text-4xl md:text-5xl font-black text-text-primary overflow-hidden shadow-2xl border-4 border-bg-base">
-              {player.avatar_url ? <img src={player.avatar_url} className="w-full h-full object-cover" /> : player.full_name.charAt(0)}
-            </div>
+            <EditableAvatar 
+              playerId={player.id} 
+              orgId={player.org_id} 
+              currentAvatarUrl={player.avatar_url} 
+              playerName={player.full_name} 
+            />
             <div className="text-center md:text-left flex-1">
               <h1 className="text-3xl md:text-4xl font-black text-text-primary tracking-tight">{player.full_name}</h1>
               <Link 

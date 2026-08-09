@@ -517,11 +517,12 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
                 </div>
                 
                 {shouldEndInnings ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center bg-bg-base rounded-xl border border-border-dim shadow-inner h-full mb-8">
-                    <h3 className="text-2xl font-black text-text-primary mb-2">Innings Complete!</h3>
-                    <p className="text-text-muted mb-8 text-sm">{isAllOut ? 'Team is All Out.' : `Maximum overs (${match.scheduled_overs || 20}) reached.`}</p>
+                  <div className="flex flex-col items-center justify-center py-16 text-center bg-gradient-to-b from-brand-primary/10 to-transparent rounded-2xl border border-brand-primary/20 shadow-[inset_0_0_50px_rgba(var(--brand-primary-rgb),0.1)] h-full mb-8 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-brand-primary to-transparent" />
+                    <h3 className="text-3xl font-black text-white mb-3 drop-shadow-md">Innings Complete!</h3>
+                    <p className="text-text-muted mb-10 text-sm">{isAllOut ? 'Team is All Out.' : `Maximum overs (${match.scheduled_overs || 20}) reached.`}</p>
                     <Button 
-                      className="h-14 px-8 text-lg font-bold bg-brand-primary hover:bg-brand-primary/80"
+                      className="h-16 px-10 text-lg font-black bg-brand-primary hover:bg-brand-primary/80 shadow-[0_0_20px_rgba(var(--brand-primary-rgb),0.4)] transition-all hover:scale-105"
                       onClick={handleEndInnings}
                       isLoading={isPending}
                     >
@@ -530,12 +531,12 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
+                    <div className="grid grid-cols-3 gap-4 sm:gap-6 mb-8">
                       {[0, 1, 2, 3, 4, 6].map(run => (
                         <Button 
                           key={run} 
                           variant={run === 4 || run === 6 ? 'primary' : 'outline'} 
-                          className={`h-16 sm:h-20 text-2xl sm:text-3xl font-black rounded-xl transition-transform hover:scale-105 ${run === 4 || run === 6 ? 'shadow-lg shadow-brand-primary/20' : 'border-bg-elevated text-text-primary hover:border-text-secondary bg-bg-base'}`}
+                          className={`h-20 sm:h-24 text-3xl sm:text-4xl font-black rounded-2xl transition-all duration-200 hover:scale-[1.02] active:scale-95 ${run === 4 || run === 6 ? 'shadow-[0_8px_30px_rgba(var(--brand-primary-rgb),0.3)] bg-gradient-to-b from-brand-primary to-brand-primary/80 border-t border-white/20' : 'border-bg-elevated/50 text-white hover:border-brand-primary/50 bg-gradient-to-b from-bg-base to-bg-surface shadow-md'}`}
                           onClick={() => handleScore(run, true)}
                           isLoading={isPending}
                         >
@@ -544,18 +545,22 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
                       ))}
                     </div>
 
-                    <h3 className="text-xs font-bold text-text-secondary uppercase mb-3">Extras</h3>
+                    <h3 className="text-xs font-bold text-text-muted uppercase tracking-widest mb-3 flex items-center gap-2">
+                      <span className="w-4 h-0.5 bg-bg-elevated rounded-full"></span>
+                      Extras
+                      <span className="flex-1 h-0.5 bg-gradient-to-r from-bg-elevated to-transparent rounded-full"></span>
+                    </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
-                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-yellow-500/50" onClick={() => handleScore(0, false, 'wide', 1)} disabled={isPending}>Wide</Button>
-                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-yellow-500/50" onClick={() => handleScore(0, false, 'no_ball', 1)} disabled={isPending}>No Ball</Button>
-                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-blue-500/50" onClick={() => handleScore(0, true, 'bye', 1)} disabled={isPending}>Bye</Button>
-                      <Button variant="outline" className="h-12 bg-bg-base border-bg-elevated text-text-secondary hover:text-text-primary rounded-lg hover:border-blue-500/50" onClick={() => handleScore(0, true, 'leg_bye', 1)} disabled={isPending}>Leg Bye</Button>
+                      <Button variant="outline" className="h-14 bg-bg-base border-bg-elevated/50 text-text-secondary hover:text-white rounded-xl hover:border-yellow-500/50 hover:bg-yellow-500/10 transition-all font-semibold" onClick={() => handleScore(0, false, 'wide', 1)} disabled={isPending}>Wide</Button>
+                      <Button variant="outline" className="h-14 bg-bg-base border-bg-elevated/50 text-text-secondary hover:text-white rounded-xl hover:border-yellow-500/50 hover:bg-yellow-500/10 transition-all font-semibold" onClick={() => handleScore(0, false, 'no_ball', 1)} disabled={isPending}>No Ball</Button>
+                      <Button variant="outline" className="h-14 bg-bg-base border-bg-elevated/50 text-text-secondary hover:text-white rounded-xl hover:border-blue-500/50 hover:bg-blue-500/10 transition-all font-semibold" onClick={() => handleScore(0, true, 'bye', 1)} disabled={isPending}>Bye</Button>
+                      <Button variant="outline" className="h-14 bg-bg-base border-bg-elevated/50 text-text-secondary hover:text-white rounded-xl hover:border-blue-500/50 hover:bg-blue-500/10 transition-all font-semibold" onClick={() => handleScore(0, true, 'leg_bye', 1)} disabled={isPending}>Leg Bye</Button>
                     </div>
 
-                    <div className="pt-6 border-t border-bg-elevated mt-auto">
+                    <div className="pt-6 border-t border-bg-elevated/50 mt-auto">
                       <Button 
                         variant="outline" 
-                        className="w-full h-16 bg-red-500/5 border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white hover:border-red-500 font-black text-xl tracking-widest uppercase transition-all rounded-xl shadow-lg hover:shadow-red-500/20"
+                        className="w-full h-16 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-600 hover:text-white hover:border-red-600 font-black text-xl tracking-widest uppercase transition-all duration-300 rounded-xl shadow-[0_4px_20px_rgba(239,68,68,0.15)] hover:shadow-[0_8px_30px_rgba(239,68,68,0.4)]"
                         onClick={() => setIsWicketDrawerOpen(true)}
                         disabled={isPending}
                       >

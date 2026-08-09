@@ -19,7 +19,9 @@ export default function MatchCenter() {
   const fetchMatches = async () => {
     const { data, error } = await supabase
       .from('matches')
-      .select('*, team1:team1_id(name), team2:team2_id(name), tournament:tournament_id(name)')
+      .select('*, team1:teams!inner!team1_id(name, deleted_at), team2:teams!inner!team2_id(name, deleted_at), tournament:tournament_id(name)')
+      .is('team1.deleted_at', null)
+      .is('team2.deleted_at', null)
       .order('created_at', { ascending: false })
     
     if (data) setMatches(data)

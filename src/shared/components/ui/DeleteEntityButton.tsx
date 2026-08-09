@@ -54,7 +54,7 @@ export function DeleteEntityButton({
     <button 
       onClick={handleDelete}
       disabled={isDeleting}
-      className={`text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors flex items-center justify-center ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      className={`text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 p-2 rounded-lg transition-colors flex items-center justify-center ${isDeleting ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       title="Delete"
     >
       <Trash2 size={iconOnly ? 18 : 16} className={!iconOnly ? "mr-2" : ""} />

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { StandingsEngine } from './standings-engine'
+import { recalculateTournamentStandings } from '@/app/actions/tournaments'
 import { StatisticsEngine } from './statistics-engine'
 
 export class MatchFinalizationEngine {
@@ -106,7 +106,7 @@ export class MatchFinalizationEngine {
     // 4. Trigger the Precomputed Engines (Standings/Stats)
     // In a fully strict system, these would also be calculated in-memory and passed to the RPC.
     if (match.tournament_id) {
-       await StandingsEngine.recalculateTournamentStandings(match.org_id, match.tournament_id);
+       await recalculateTournamentStandings(match.tournament_id);
        await StatisticsEngine.recalculateTournamentStatistics(match.org_id, match.tournament_id);
        
        // Update career stats for all players in this match

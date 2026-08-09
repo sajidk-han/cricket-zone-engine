@@ -38,7 +38,7 @@ export function OptimizedImage({
   }
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`relative overflow-hidden ${className} ${fill ? 'w-full h-full' : ''}`}>
       <Image
         src={src}
         alt={alt}

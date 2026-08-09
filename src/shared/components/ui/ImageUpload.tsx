@@ -6,6 +6,7 @@ import { UploadCloud, Image as ImageIcon, X, Loader2, AlertCircle } from 'lucide
 export interface ImageUploadHandle {
   upload: (dynamicFolderPath?: string, dynamicFileName?: string) => Promise<string | null>;
   hasFile: () => boolean;
+  getFile: () => Blob | null;
 }
 
 export type ImageUploadProps = {
@@ -19,6 +20,7 @@ export type ImageUploadProps = {
   onRemove?: () => void
   currentImageUrl?: string | null
   className?: string
+  variant?: 'default' | 'avatar'
 }
 
 export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({ 
@@ -31,7 +33,8 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
   onUploadError,
   onRemove,
   currentImageUrl,
-  className = ""
+  className = "",
+  variant = 'default'
 }, ref) => {
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -47,14 +50,15 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
       if (!selectedFile) return null;
       return await performUpload(selectedFile, dynamicFolderPath, dynamicFileName);
     },
-    hasFile: () => selectedFile !== null
+    hasFile: () => selectedFile !== null,
+    getFile: () => selectedFile
   }));
 
   // Maximum allowed sizes
   const MAX_INPUT_SIZE_MB = 5
   const MAX_INPUT_BYTES = MAX_INPUT_SIZE_MB * 1024 * 1024
-  const TARGET_MAX_BYTES = 500 * 1024 // 500KB
-  const MAX_DIMENSION = 512
+  const TARGET_MAX_BYTES = 50 * 1024 // 50KB
+  const MAX_DIMENSION = 400
 
   const processAndUploadImage = async (file: File) => {
     setError(null)
@@ -77,7 +81,7 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
       const optimizedBlob = await compressImage(file)
       
       if (optimizedBlob.size > TARGET_MAX_BYTES) {
-        throw new Error("Image could not be compressed under 500KB. Please select a simpler or smaller image.")
+        throw new Error("Image could not be compressed under 50KB. Please select a simpler or smaller image.")
       }
 
       // Create a local preview
@@ -112,11 +116,13 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
         // Use server action for upload (secure, uses service role key)
         const parts = activePath.split('/')
         const orgId = parts[0]
-        const teamId = parts[1]
+        const entityId = parts[1] // Can be teamId, playerId, etc.
         
         const uploadFormData = new FormData()
         uploadFormData.append('orgId', orgId)
-        uploadFormData.append('teamId', teamId)
+        uploadFormData.append('teamId', entityId) // For backwards compatibility with teams
+        uploadFormData.append('entityId', entityId)
+        uploadFormData.append('bucketName', bucketName)
         uploadFormData.append('file', blob, activeName)
         
         const result = await serverUploadAction(uploadFormData)
@@ -166,7 +172,7 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
           // Preserve transparency by not filling background for PNG/WEBP
           ctx.drawImage(img, 0, 0, width, height)
 
-          // Convert to WebP (quality 0.8 is usually good for keeping under 500kb for 512x512)
+          // Convert to WebP (quality 0.7 for 400x400 should easily fit 50KB)
           canvas.toBlob(
             (blob) => {
               if (blob) {
@@ -176,7 +182,7 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
               }
             },
             'image/webp',
-            0.85
+            0.7
           )
         }
         img.src = e.target?.result as string
@@ -244,12 +250,18 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`
+        className={variant === 'avatar' ? `
+          relative w-full h-full rounded-full overflow-hidden cursor-pointer group flex items-center justify-center
+          ${isDragging ? 'ring-4 ring-brand-primary/50 bg-black/40' : 'hover:bg-black/20'}
+          ${(isUploading || isCompressing) ? 'pointer-events-none' : ''}
+          ${className}
+        ` : `
           relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl transition-all
           min-h-[160px] cursor-pointer group focus-within:ring-2 focus-within:ring-brand-primary outline-none
           ${isDragging ? 'border-brand-primary bg-brand-primary/10' : 'border-bg-elevated bg-bg-surface hover:border-brand-primary/50 hover:bg-bg-base'}
           ${error ? 'border-red-500/50 bg-red-500/5' : ''}
           ${(isUploading || isCompressing) ? 'pointer-events-none opacity-80' : ''}
+          ${className}
         `}
         tabIndex={0}
         onKeyDown={(e) => {
@@ -261,7 +273,39 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
         role="button"
         aria-disabled={isUploading || isCompressing}
       >
-        {/* Preview Mode */}
+        {variant === 'avatar' ? (
+          <>
+            {previewUrl && !error ? (
+              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-bg-elevated flex items-center justify-center">
+                <ImageIcon className="w-8 h-8 text-text-muted opacity-50" />
+              </div>
+            )}
+            
+            {/* Hover overlay with camera icon */}
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <UploadCloud className="w-8 h-8 text-white drop-shadow-md" />
+            </div>
+
+            {/* Status Overlays */}
+            {isCompressing && (
+              <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center backdrop-blur-sm">
+                <Loader2 className="w-6 h-6 text-brand-primary animate-spin mb-1" />
+                <span className="text-[10px] font-bold text-white uppercase">Opt...</span>
+              </div>
+            )}
+            
+            {isUploading && (
+              <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center backdrop-blur-sm">
+                <UploadCloud className="w-6 h-6 text-brand-primary animate-bounce mb-1" />
+                <span className="text-[10px] font-bold text-white uppercase">Up...</span>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Preview Mode */}
         {previewUrl && !error ? (
           <div className="relative w-full flex flex-col items-center">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-bg-elevated shadow-md mb-4 bg-black/20 flex items-center justify-center">
@@ -325,6 +369,8 @@ export const ImageUpload = forwardRef<ImageUploadHandle, ImageUploadProps>(({
               </>
             )}
           </div>
+        )}
+          </>
         )}
       </div>
     </div>

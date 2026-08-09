@@ -37,31 +37,31 @@ export const BowlerWidget = React.memo(function BowlerWidget({ bowler, onChangeB
       </div>
       <CardContent className="p-4 flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         
-        <div className="flex items-center justify-between w-full sm:w-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse shadow-[0_0_8px_var(--brand-primary)]" />
-            <span className="font-bold text-text-primary text-base sm:text-lg truncate max-w-[120px] sm:max-w-none">{bowler.name}</span>
+        <div className="flex items-center justify-between w-full sm:w-auto relative">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse shadow-[0_0_10px_var(--brand-primary)]" />
+            <span className="font-bold text-white text-base sm:text-lg truncate tracking-wide max-w-[120px] sm:max-w-none drop-shadow-sm">{bowler.name}</span>
           </div>
           
-          <div className="flex sm:hidden items-center gap-3 text-[10px] text-text-secondary border-l border-white/10 pl-3">
+          <div className="flex sm:hidden items-center gap-3 text-[10px] text-text-muted border-l border-white/10 pl-3 font-medium">
             <div className="flex flex-col text-right">
-              <span>Econ: <strong className="text-text-primary">{econ}</strong></span>
-              <span>Dots: <strong className="text-text-primary">{dotPercent}%</strong></span>
+              <span>Econ: <strong className="text-white/80">{econ}</strong></span>
+              <span>Dots: <strong className="text-white/80">{dotPercent}%</strong></span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-6 w-full sm:w-auto mt-2 sm:mt-0 bg-bg-base sm:bg-transparent p-2 sm:p-0 rounded-lg sm:rounded-none">
+        <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-8 w-full sm:w-auto mt-4 sm:mt-0">
           <StatBox label="O" value={bowler.overs.toString()} />
           <StatBox label="M" value={bowler.maidens.toString()} />
           <StatBox label="R" value={bowler.runs.toString()} />
           <StatBox label="W" value={bowler.wickets.toString()} highlight />
         </div>
 
-        <div className="hidden sm:flex items-center gap-4 text-xs text-text-secondary border-l border-white/10 pl-4">
-          <div className="flex flex-col">
-            <span>Econ: <strong className="text-text-primary">{econ}</strong></span>
-            <span>Dots: <strong className="text-text-primary">{dotPercent}%</strong></span>
+        <div className="hidden sm:flex items-center gap-6 text-xs text-text-muted border-l border-white/10 pl-6 font-medium">
+          <div className="flex flex-col gap-1">
+            <span className="flex items-center justify-between w-20">Econ <strong className="text-white/80">{econ}</strong></span>
+            <span className="flex items-center justify-between w-20">Dots <strong className="text-white/80">{dotPercent}%</strong></span>
           </div>
         </div>
 
@@ -72,9 +72,9 @@ export const BowlerWidget = React.memo(function BowlerWidget({ bowler, onChangeB
 
 function StatBox({ label, value, highlight = false }: { label: string, value: string, highlight?: boolean }) {
   return (
-    <div className="flex flex-col sm:items-center">
-      <span className="text-[10px] text-text-secondary font-bold">{label}</span>
-      <span className={`text-sm sm:text-xl font-black ${highlight ? 'text-brand-primary' : 'text-text-primary'}`}>{value}</span>
+    <div className="flex flex-col sm:items-center min-w-[32px] sm:min-w-[40px]">
+      <span className="text-[10px] text-text-secondary/70 font-bold uppercase tracking-wider mb-1">{label}</span>
+      <span className={`text-lg sm:text-2xl font-black ${highlight ? 'text-brand-primary drop-shadow-[0_0_8px_rgba(var(--brand-primary-rgb),0.5)]' : 'text-white'}`}>{value}</span>
     </div>
   )
 }
