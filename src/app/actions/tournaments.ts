@@ -36,11 +36,14 @@ export async function createTournament(input: CreateTournamentInput): Promise<Ac
       return { success: false, message: "A tournament with this name already exists", code: "DUPLICATE_NAME" }
     }
 
+    const slug = validated.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now().toString(36)
+
     const { data, error } = await supabase
       .from('tournaments')
       .insert([{
         org_id: orgId,
         name: validated.name,
+        slug: slug,
         start_date: validated.start_date,
         end_date: validated.end_date,
         status: 'draft',
