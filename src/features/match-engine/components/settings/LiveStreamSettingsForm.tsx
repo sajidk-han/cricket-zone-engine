@@ -50,7 +50,7 @@ export function LiveStreamSettingsForm({ matchId, initialUrl }: { matchId: strin
           <label className="block text-sm font-medium text-text-secondary mb-2">
             YouTube or Facebook Live URL
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
             <input
               type="text"
               value={url}
@@ -59,16 +59,18 @@ export function LiveStreamSettingsForm({ matchId, initialUrl }: { matchId: strin
                 setStatus({ type: 'idle', message: '' })
               }}
               placeholder="e.g. https://www.youtube.com/watch?v=..."
-              className="flex-1 bg-bg-base border border-bg-elevated rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-brand-primary transition-colors"
+              className="flex-1 min-w-0 bg-bg-base border border-bg-elevated rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-brand-primary transition-colors"
             />
-            <Button onClick={handleSave} disabled={isPending || (!!url && !parsed)} variant="primary">
-              {isPending ? 'Saving...' : 'Save'}
-            </Button>
-            {initialUrl && (
-              <Button onClick={handleRemove} disabled={isPending} variant="danger" className="px-3">
-                <Trash2 size={18} />
+            <div className="flex gap-2 shrink-0">
+              <Button onClick={handleSave} disabled={isPending || (!!url && !parsed)} variant="primary" className="flex-1 sm:flex-none">
+                {isPending ? 'Saving...' : 'Save'}
               </Button>
-            )}
+              {initialUrl && (
+                <Button onClick={handleRemove} disabled={isPending} variant="danger" className="px-3 shrink-0">
+                  <Trash2 size={18} />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
