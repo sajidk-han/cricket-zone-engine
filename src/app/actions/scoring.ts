@@ -55,6 +55,14 @@ export async function initializeInnings(
 
     if (eventError) console.error("Failed to log match event", eventError)
 
+    // Update Match Status to Live
+    const { error: matchUpdateError } = await supabase
+      .from('matches')
+      .update({ status: 'live', current_innings: inningsNumber })
+      .eq('id', matchId)
+
+    if (matchUpdateError) console.error("Failed to update match status to live", matchUpdateError)
+
     revalidatePath(`/matches/${matchId}/dashboard`)
     revalidatePath(`/matches/${matchId}/scoring`)
     return { success: true, message: "Innings initialized successfully", data: innings }
