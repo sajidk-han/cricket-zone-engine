@@ -39,7 +39,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111c44]/50 backdrop-blur-md border border-[#1b2559] text-[#a3aed1] text-sm font-semibold mb-6 md:mb-8 hover:border-brand-primary/50 hover:bg-[#1b2559] transition-colors cursor-pointer group shadow-xl"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111c44]/50 backdrop-blur-md border border-[#1b2559] text-[#b4c0e0] text-sm font-semibold mb-6 md:mb-8 hover:border-brand-primary/50 hover:bg-[#1b2559] transition-colors cursor-pointer group shadow-xl shadow-brand-primary/5 ring-1 ring-white/5"
         >
           <Activity size={16} className="text-emerald-500 animate-pulse" />
           <span className="text-white">All systems operational</span>
@@ -63,7 +63,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg md:text-2xl text-[#a3aed1] mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+          className="text-lg md:text-2xl text-[#b4c0e0] mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
         >
           Manage matches, score live, engage fans, and scale your cricket tournaments from one powerful, cloud-native platform.
         </motion.p>
@@ -83,7 +83,7 @@ export function HeroSection() {
             </button>
           </Link>
           <Link href="/register" className="w-full sm:w-auto">
-            <button className="w-full sm:w-auto rounded-full px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-bold border border-[#a3aed1]/30 hover:border-brand-accent/50 bg-[#111c44]/50 hover:bg-[#1b2559] text-white backdrop-blur-md hover:-translate-y-1 transition-all duration-300 shadow-xl group flex items-center justify-center focus:outline-none">
+            <button className="w-full sm:w-auto rounded-full px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-bold border border-[#a3aed1]/40 hover:border-brand-accent/60 bg-[#111c44]/60 hover:bg-[#1b2559] text-white backdrop-blur-md hover:-translate-y-1 transition-all duration-300 shadow-[0_0_15px_rgba(163,174,209,0.15)] group flex items-center justify-center focus:outline-none">
               Start a Tournament
               <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
