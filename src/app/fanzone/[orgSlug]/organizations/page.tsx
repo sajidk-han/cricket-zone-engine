@@ -18,6 +18,7 @@ async function fetchOrgTeams(orgSlug: string) {
     .from('teams')
     .select('*')
     .eq('org_id', org.id)
+    .is('deleted_at', null)
     .order('name', { ascending: true })
 
   return teams || []

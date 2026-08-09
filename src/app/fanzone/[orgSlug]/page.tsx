@@ -41,6 +41,7 @@ async function getFanzoneData(orgSlug: string) {
       .from('teams')
       .select('id, name, short_name, slug, logo_url')
       .eq('org_id', org.id)
+      .is('deleted_at', null)
       .limit(4)
 
     const { data: recentResults } = await supabase
