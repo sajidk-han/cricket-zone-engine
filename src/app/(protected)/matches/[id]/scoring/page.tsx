@@ -66,7 +66,7 @@ async function fetchLastBall(inningsId: string, matchId: string) {
   if (initEvent?.description && initEvent.description.startsWith('{')) {
     try {
       const parsedData = JSON.parse(initEvent.description)
-      return { over_number: 0, striker_id: parsedData.strikerId, non_striker_id: parsedData.nonStrikerId, bowler_id: parsedData.bowlerId }
+      return { over_number: 0, striker_id: parsedData.striker_id || parsedData.strikerId, non_striker_id: parsedData.non_striker_id || parsedData.nonStrikerId, bowler_id: parsedData.bowler_id || parsedData.bowlerId }
     } catch(e) { return null }
   }
   return null

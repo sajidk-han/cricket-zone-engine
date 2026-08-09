@@ -56,6 +56,7 @@ export async function initializeInnings(
     if (eventError) console.error("Failed to log match event", eventError)
 
     revalidatePath(`/matches/${matchId}/dashboard`)
+    revalidatePath(`/matches/${matchId}/scoring`)
     return { success: true, message: "Innings initialized successfully", data: innings }
 
   } catch (error: any) {

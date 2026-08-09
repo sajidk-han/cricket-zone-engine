@@ -75,10 +75,11 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
 
     startTransition(async () => {
       const res = await initializeInnings(
-        matchId, battingTeamId, bowlingTeamId, match.current_innings || 1, strikerId, nonStrikerId, bowlerId
+        matchId, selectedBattingTeamId, selectedBowlingTeamId, match.current_innings || 1, strikerId, nonStrikerId, bowlerId
       )
       if (res.success) {
         toast.success(res.message)
+        setTimeout(() => window.location.reload(), 500)
       } else {
         toast.error(res.message)
       }
