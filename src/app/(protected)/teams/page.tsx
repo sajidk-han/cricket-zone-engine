@@ -30,7 +30,7 @@ export default async function TeamsList() {
             <Link key={team.id} href={`/teams/${team.id}`} className="block group relative">
               <Card className="hover:border-brand-primary/50 transition-colors h-full">
                 <CardContent className="p-6 flex flex-col items-center text-center relative">
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <div className="absolute top-2 right-2 z-20">
                     <DeleteEntityButton 
                       id={team.id} 
                       onDelete={deleteTeam} 
