@@ -39,6 +39,24 @@ export async function createTeam(formData: FormData) {
   return data
 }
 
+export async function deleteTeam(teamId: string) {
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('teams')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', teamId)
+
+    if (error) throw error
+
+    revalidatePath('/teams')
+    return { success: true, message: "Team deleted successfully!" }
+  } catch (error: any) {
+    console.error("Delete team error", error)
+    return { success: false, message: "Failed to delete team" }
+  }
+}
+
 export async function updateTeamLogo(teamId: string, logoUrl: string) {
   const supabase = await createClient()
   const { data, error } = await supabase

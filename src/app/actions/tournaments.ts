@@ -158,6 +158,24 @@ export async function enrollTeam(tournamentId: string, teamId: string): Promise<
   }
 }
 
+export async function deleteTournament(tournamentId: string) {
+  try {
+    const supabase = await createClient()
+    const { error } = await supabase
+      .from('tournaments')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', tournamentId)
+
+    if (error) throw error
+
+    revalidatePath('/tournaments')
+    return { success: true, message: "Tournament deleted successfully!" }
+  } catch (error: any) {
+    console.error("Delete tournament error", error)
+    return { success: false, message: "Failed to delete tournament" }
+  }
+}
+
 export async function getTournamentTeams(tournamentId: string): Promise<ActionResponse> {
   try {
     const orgId = await getDefaultOrgId()

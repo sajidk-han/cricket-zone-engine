@@ -1,8 +1,9 @@
 import React from 'react'
 import { Card, CardContent } from '@/shared/components/ui/Card'
 import Link from 'next/link'
-import { fetchTeams } from '@/app/actions/teams'
+import { fetchTeams, deleteTeam } from '@/app/actions/teams'
 import { CreateTeamDrawer } from '@/features/teams/components/CreateTeamDrawer'
+import { DeleteEntityButton } from '@/shared/components/ui/DeleteEntityButton'
 
 export default async function TeamsList() {
   const teams = await fetchTeams()
@@ -26,9 +27,17 @@ export default async function TeamsList() {
            </div>
         ) : (
           teams.map(team => (
-            <Link key={team.id} href={`/teams/${team.id}`} className="block group">
+            <Link key={team.id} href={`/teams/${team.id}`} className="block group relative">
               <Card className="hover:border-brand-primary/50 transition-colors h-full">
-                <CardContent className="p-6 flex flex-col items-center text-center">
+                <CardContent className="p-6 flex flex-col items-center text-center relative">
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <DeleteEntityButton 
+                      id={team.id} 
+                      onDelete={deleteTeam} 
+                      confirmMessage="Are you sure you want to delete this team? This action is irreversible."
+                      iconOnly={true}
+                    />
+                  </div>
                   <div className="w-20 h-20 rounded-2xl bg-bg-base border border-bg-elevated flex items-center justify-center text-4xl mb-4 group-hover:scale-110 transition-transform overflow-hidden">
                     {team.logo_url ? <img src={team.logo_url} alt="Logo" className="w-full h-full object-cover" /> : '🛡️'}
                   </div>
