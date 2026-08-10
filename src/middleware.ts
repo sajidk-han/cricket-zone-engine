@@ -60,7 +60,8 @@ export async function middleware(request: NextRequest) {
   const isPublicRoute = request.nextUrl.pathname === '/login' || 
                         request.nextUrl.pathname === '/register' || 
                         request.nextUrl.pathname === '/' ||
-                        request.nextUrl.pathname.startsWith('/public')
+                        request.nextUrl.pathname.startsWith('/public') ||
+                        request.nextUrl.pathname.startsWith('/fanzone')
   const isApiRoute = request.nextUrl.pathname.startsWith('/api') || request.nextUrl.pathname.startsWith('/_next')
 
   if (!isPublicRoute && !isApiRoute && !user) {
