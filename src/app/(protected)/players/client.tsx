@@ -102,10 +102,10 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
                     {player.leadership_role && player.leadership_role !== 'none' ? (
                       <Badge variant="outline" className={
                         player.leadership_role === 'Captain' 
-                          ? 'text-yellow-500 border-yellow-500/30 bg-yellow-500/10 font-bold' 
-                          : 'text-blue-400 border-blue-400/30 bg-blue-400/10 font-bold'
+                          ? 'text-yellow-500 border-yellow-500/50 bg-yellow-500/10 font-bold px-3' 
+                          : 'text-[#3b82f6] border-[#3b82f6]/50 bg-[#3b82f6]/10 font-bold px-3'
                       }>
-                        {player.leadership_role === 'Captain' ? 'Captain (C)' : 'Vice Captain (VC)'}
+                        {player.leadership_role === 'Captain' ? 'C' : 'VC'}
                       </Badge>
                     ) : (
                       <span className="text-text-muted text-sm">-</span>
