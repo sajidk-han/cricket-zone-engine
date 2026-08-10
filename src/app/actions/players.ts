@@ -29,6 +29,7 @@ export async function createPlayer(formData: FormData) {
     const battingStyle = formData.get('battingStyle') as string
     const bowlingStyle = formData.get('bowlingStyle') as string
     const role = formData.get('role') as string
+    const leadershipRole = formData.get('leadershipRole') as string
 
     const avatarUrl = formData.get('avatarUrl') as string || null
 
@@ -45,6 +46,7 @@ export async function createPlayer(formData: FormData) {
         org_id: orgId,
         full_name: fullName,
         primary_role: role,
+        leadership_role: leadershipRole && leadershipRole !== 'none' ? leadershipRole : null,
         batting_style: battingStyle !== 'none' ? battingStyle : null,
         bowling_style: bowlingStyle !== 'none' ? bowlingStyle : null,
         avatar_url: avatarUrl,
@@ -102,6 +104,7 @@ export async function updatePlayer(playerId: string, formData: FormData) {
     const battingStyle = formData.get('battingStyle') as string
     const bowlingStyle = formData.get('bowlingStyle') as string
     const role = formData.get('role') as string
+    const leadershipRole = formData.get('leadershipRole') as string
 
     if (!fullName) return { success: false, message: "Full Name is required" }
 
@@ -112,6 +115,7 @@ export async function updatePlayer(playerId: string, formData: FormData) {
       .update({
         full_name: fullName,
         primary_role: role,
+        leadership_role: leadershipRole && leadershipRole !== 'none' ? leadershipRole : null,
         batting_style: battingStyle !== 'none' ? battingStyle : null,
         bowling_style: bowlingStyle !== 'none' ? bowlingStyle : null,
         avatar_url: formData.get('avatarUrl') as string || null,

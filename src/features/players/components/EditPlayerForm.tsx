@@ -55,21 +55,37 @@ export function EditPlayerForm({ player }: EditPlayerFormProps) {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1">
-              Player Role <span className="text-red-500">*</span>
-            </label>
-            <select 
-              name="role" 
-              required
-              defaultValue={player.primary_role || 'batsman'}
-              className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-brand-primary"
-            >
-              <option value="batsman">Batsman</option>
-              <option value="bowler">Bowler</option>
-              <option value="allrounder">All-rounder</option>
-              <option value="wicketkeeper">Wicket Keeper</option>
-            </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Primary Role <span className="text-red-500">*</span>
+              </label>
+              <select 
+                name="role" 
+                required
+                defaultValue={player.primary_role || 'batsman'}
+                className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-brand-primary"
+              >
+                <option value="batsman">Batsman</option>
+                <option value="bowler">Bowler</option>
+                <option value="allrounder">All-rounder</option>
+                <option value="wicketkeeper">Wicket Keeper</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-text-secondary mb-1">
+                Leadership Role
+              </label>
+              <select 
+                name="leadershipRole" 
+                defaultValue={player.leadership_role || 'none'}
+                className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-brand-primary"
+              >
+                <option value="none">None</option>
+                <option value="Captain">Captain</option>
+                <option value="Vice Captain">Vice Captain</option>
+              </select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

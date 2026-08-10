@@ -117,20 +117,35 @@ export function CreatePlayerDrawer({
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
-                Player Role <span className="text-red-500">*</span>
-              </label>
-              <select 
-                name="role" 
-                required
-                className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary"
-              >
-                <option value="batsman">Batsman</option>
-                <option value="bowler">Bowler</option>
-                <option value="allrounder">All-rounder</option>
-                <option value="wicketkeeper">Wicket Keeper</option>
-              </select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  Primary Role <span className="text-red-500">*</span>
+                </label>
+                <select 
+                  name="role" 
+                  required
+                  className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary"
+                >
+                  <option value="batsman">Batsman</option>
+                  <option value="bowler">Bowler</option>
+                  <option value="allrounder">All-rounder</option>
+                  <option value="wicketkeeper">Wicket Keeper</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1">
+                  Leadership Role
+                </label>
+                <select 
+                  name="leadershipRole" 
+                  className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary"
+                >
+                  <option value="none">None</option>
+                  <option value="Captain">Captain</option>
+                  <option value="Vice Captain">Vice Captain</option>
+                </select>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
