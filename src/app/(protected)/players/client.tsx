@@ -68,6 +68,7 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
               <TableRow className="border-bg-elevated bg-bg-base hover:bg-bg-base">
                 <TableHead className="w-[300px] text-xs font-bold text-text-secondary">PLAYER</TableHead>
                 <TableHead className="text-xs font-bold text-text-secondary">ROLE</TableHead>
+                <TableHead className="text-xs font-bold text-text-secondary">LEADERSHIP</TableHead>
                 <TableHead className="text-xs font-bold text-text-secondary">BATTING</TableHead>
                 <TableHead className="text-xs font-bold text-text-secondary">BOWLING</TableHead>
                 <TableHead className="text-right text-xs font-bold text-text-secondary">ACTIONS</TableHead>
@@ -96,6 +97,19 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
                     <Badge variant="outline" className="text-text-secondary border-bg-elevated capitalize">
                       {player.primary_role || 'N/A'}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {player.leadership_role && player.leadership_role !== 'none' ? (
+                      <Badge variant="outline" className={
+                        player.leadership_role === 'Captain' 
+                          ? 'text-yellow-500 border-yellow-500/30 bg-yellow-500/10 font-bold' 
+                          : 'text-blue-400 border-blue-400/30 bg-blue-400/10 font-bold'
+                      }>
+                        {player.leadership_role === 'Captain' ? 'Captain (C)' : 'Vice Captain (VC)'}
+                      </Badge>
+                    ) : (
+                      <span className="text-text-muted text-sm">-</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-text-secondary border-bg-elevated">
@@ -139,7 +153,7 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
               
               {filteredPlayers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-32 text-center text-text-secondary">
+                  <TableCell colSpan={6} className="h-32 text-center text-text-secondary">
                     No players found matching your criteria.
                   </TableCell>
                 </TableRow>
