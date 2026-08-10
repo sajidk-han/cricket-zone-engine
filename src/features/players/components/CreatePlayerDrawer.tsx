@@ -130,8 +130,6 @@ export function CreatePlayerDrawer({
                 <option value="bowler">Bowler</option>
                 <option value="allrounder">All-rounder</option>
                 <option value="wicketkeeper">Wicket Keeper</option>
-                <option value="Captain">Captain</option>
-                <option value="Vice Captain">Vice Captain</option>
               </select>
             </div>
             
