@@ -1,24 +1,27 @@
 "use server"
 
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-server'
 
 export async function fetchDashboardStats() {
+  const supabase = await createClient()
+
   const [
     { count: activeTournaments },
     { count: registeredTeams },
     { count: totalPlayers },
     { count: liveMatches }
   ] = await Promise.all([
-    supabase.from('tournaments').select('*', { count: 'exact', head: true }).in('status', ['scheduled', 'ongoing']),
+    supabase.from('tournaments').select('*', { count: 'exact', head: true }).in('status', ['scheduled', 'ongoing']).is('deleted_at', null),
     supabase.from('teams').select('*', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('players').select('*', { count: 'exact', head: true }).is('deleted_at', null),
-    supabase.from('matches').select('*', { count: 'exact', head: true }).eq('status', 'live')
+    supabase.from('matches').select('id, team1:teams!matches_team1_id_fkey!inner(id), team2:teams!matches_team2_id_fkey!inner(id)', { count: 'exact', head: true }).eq('status', 'live').is('deleted_at', null).is('team1.deleted_at', null).is('team2.deleted_at', null)
   ])
 
   // Get recent activity (last 4 items)
   const { data: recentTournaments } = await supabase
     .from('tournaments')
     .select('name, created_at')
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(4)
 
@@ -32,7 +35,7 @@ export async function fetchDashboardStats() {
     { data: recentMatches },
     { data: recentPlayers }
   ] = await Promise.all([
-    supabase.from('matches').select('created_at').gte('created_at', sevenDaysAgoIso),
+    supabase.from('matches').select('created_at, team1:teams!matches_team1_id_fkey!inner(id), team2:teams!matches_team2_id_fkey!inner(id)').gte('created_at', sevenDaysAgoIso).is('deleted_at', null).is('team1.deleted_at', null).is('team2.deleted_at', null),
     supabase.from('players').select('created_at').gte('created_at', sevenDaysAgoIso).is('deleted_at', null)
   ])
 

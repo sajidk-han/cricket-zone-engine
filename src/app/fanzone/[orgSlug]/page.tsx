@@ -27,13 +27,15 @@ async function getFanzoneData(orgSlug: string) {
       .from('matches')
       .select(`
         id, slug, status, team1_id, team2_id, winning_team_id,
-        team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
-        team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
+        team1:teams!matches_team1_id_fkey!inner(id, name, short_name, logo_url),
+        team2:teams!matches_team2_id_fkey!inner(id, name, short_name, logo_url),
         tournament:tournaments(id, name, slug),
         innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
       `)
       .eq('org_id', org.id)
       .is('deleted_at', null)
+      .is('team1.deleted_at', null)
+      .is('team2.deleted_at', null)
       .in('status', ['live', 'scheduled', 'completed'])
       .order('status', { ascending: true })
       .limit(5)
@@ -49,14 +51,16 @@ async function getFanzoneData(orgSlug: string) {
       .from('matches')
       .select(`
         id, slug, status, result_reason, winning_team_id,
-        team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
-        team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
+        team1:teams!matches_team1_id_fkey!inner(id, name, short_name, logo_url),
+        team2:teams!matches_team2_id_fkey!inner(id, name, short_name, logo_url),
         winning_team:teams!matches_winning_team_id_fkey(id, name),
         tournament:tournaments(id, name, slug),
         innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
       `)
       .eq('org_id', org.id)
       .is('deleted_at', null)
+      .is('team1.deleted_at', null)
+      .is('team2.deleted_at', null)
       .eq('status', 'completed')
       .order('end_time', { ascending: false })
       .limit(4)

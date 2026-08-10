@@ -19,13 +19,15 @@ async function fetchAllMatches(orgSlug: string) {
     .select(`
       id, slug, status, team1_id, team2_id, winning_team_id,
       scheduled_time, start_time, match_stage,
-      team1:teams!matches_team1_id_fkey(id, name, short_name, logo_url),
-      team2:teams!matches_team2_id_fkey(id, name, short_name, logo_url),
+      team1:teams!matches_team1_id_fkey!inner(id, name, short_name, logo_url),
+      team2:teams!matches_team2_id_fkey!inner(id, name, short_name, logo_url),
       tournament:tournaments(id, name, slug),
       innings(innings_number, batting_team_id, total_runs, total_wickets, overs_bowled)
     `)
     .eq('org_id', org.id)
     .is('deleted_at', null)
+    .is('team1.deleted_at', null)
+    .is('team2.deleted_at', null)
     .order('scheduled_time', { ascending: false })
 
   if (!data) return []
