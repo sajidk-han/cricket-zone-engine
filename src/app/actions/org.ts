@@ -33,9 +33,7 @@ export async function getDefaultOrgId() {
     return membership.org_id
   }
 
-  // Fallback to finding any organization if no membership exists (edge case)
-  const { data: fallbackOrg } = await supabase.from('organizations').select('id').limit(1).maybeSingle()
-  if (fallbackOrg) return fallbackOrg.id
-  
-  throw new Error('Failed to find an organization. Please register one.')
+  // Strict Tenant Isolation: Never fall back to a random organization!
+  // If the user has no membership (which shouldn't happen with the new trigger), they must be isolated.
+  throw new Error('NO_ORG')
 }
