@@ -62,8 +62,8 @@ export async function GET(request: Request) {
 
     if (teamsError) throw teamsError
 
-    const kwTeam = teams.find(t => t.short_name === 'KW')
-    const ahTeam = teams.find(t => t.short_name === 'AH')
+    const kwTeam = teams!.find((t: any) => t.short_name === 'KW')
+    const ahTeam = teams!.find((t: any) => t.short_name === 'AH')
 
     // 4. Enroll Teams in Tournament
     await adminSupabase.from('tournament_teams').insert([
