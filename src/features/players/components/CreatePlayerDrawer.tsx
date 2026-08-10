@@ -86,7 +86,7 @@ export function CreatePlayerDrawer({
         position="right"
         size="md"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form key={isOpen ? 'open' : 'closed'} onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-blue-900/20 border border-blue-500/30 text-blue-400 p-3 rounded-lg text-xs leading-relaxed">
             <strong>Note:</strong> Players registered here are added to your <strong>Global Player Pool</strong>. You can assign them to specific teams from the Team Dashboard.
           </div>
@@ -130,6 +130,8 @@ export function CreatePlayerDrawer({
                 <option value="bowler">Bowler</option>
                 <option value="allrounder">All-rounder</option>
                 <option value="wicketkeeper">Wicket Keeper</option>
+                <option value="Captain">Captain</option>
+                <option value="Vice Captain">Vice Captain</option>
               </select>
             </div>
             
