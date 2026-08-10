@@ -64,18 +64,25 @@ export async function createTournament(input: CreateTournamentInput): Promise<Ac
 
 export async function getTournaments(): Promise<ActionResponse> {
   try {
-    const orgId = await getDefaultOrgId()
-    if (!orgId) return { success: false, message: "Organization not found", code: "NO_ORG" }
-
     const supabase = await createClient()
+    const { data: isSuperAdmin } = await supabase.rpc('is_super_admin')
 
-    // Rule 7: Soft delete enforced
-    const { data, error } = await supabase
-      .from('tournaments')
+    let orgId = null;
+    if (!isSuperAdmin) {
+      orgId = await getDefaultOrgId()
+      if (!orgId) return { success: false, message: "Organization not found", code: "NO_ORG" }
+    }
+
+    let query = supabase.from('tournaments')
       .select('*')
-      .eq('org_id', orgId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
+
+    if (!isSuperAdmin) {
+      query = query.eq('org_id', orgId)
+    }
+
+    const { data, error } = await query
 
     if (error) throw error
 
@@ -87,18 +94,25 @@ export async function getTournaments(): Promise<ActionResponse> {
 
 export async function getTournamentById(id: string): Promise<ActionResponse> {
   try {
-    const orgId = await getDefaultOrgId()
-    if (!orgId) return { success: false, message: "Organization not found" }
-
     const supabase = await createClient()
+    const { data: isSuperAdmin } = await supabase.rpc('is_super_admin')
 
-    const { data, error } = await supabase
-      .from('tournaments')
+    let orgId = null;
+    if (!isSuperAdmin) {
+      orgId = await getDefaultOrgId()
+      if (!orgId) return { success: false, message: "Organization not found" }
+    }
+
+    let query = supabase.from('tournaments')
       .select('*')
       .eq('id', id)
-      .eq('org_id', orgId)
       .is('deleted_at', null)
-      .single()
+
+    if (!isSuperAdmin) {
+      query = query.eq('org_id', orgId)
+    }
+
+    const { data, error } = await query.single()
 
     if (error) throw error
     if (!data) return { success: false, message: "Tournament not found", code: "NOT_FOUND" }
