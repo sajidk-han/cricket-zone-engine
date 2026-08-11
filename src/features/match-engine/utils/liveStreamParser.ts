@@ -32,12 +32,16 @@ export function parseLiveStreamUrl(url: string | null | undefined): ParsedLiveSt
     
     // 2. Facebook
     if (parsedUrl.hostname.includes('facebook.com') || parsedUrl.hostname.includes('fb.watch')) {
+      // Reject short share links as they cannot be reliably embedded or resolved
+      if (parsedUrl.pathname.includes('/share/')) {
+        return null
+      }
+
       // Basic check to ensure it's a video/live URL
       if (
         parsedUrl.pathname.includes('/videos/') || 
         parsedUrl.pathname.includes('/live/') || 
         parsedUrl.pathname.includes('/watch') ||
-        parsedUrl.pathname.includes('/share/') ||
         parsedUrl.pathname.includes('/reel/') ||
         parsedUrl.hostname.includes('fb.watch')
       ) {

@@ -75,7 +75,14 @@ export function LiveStreamSettingsForm({ matchId, initialUrl }: { matchId: strin
         </div>
 
         {/* Client-Side Validation Feedback */}
-        {url && !parsed && (
+        {url && (url.includes('/share/') || url.includes('fb.watch')) && (
+          <div className="flex items-start gap-2 text-amber-500 bg-amber-500/10 p-3 rounded-lg text-sm border border-amber-500/20">
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <p>Facebook mobile share links are not supported for embedding. Please open the video in a browser and copy the full link from the address bar (e.g., clicking on the video date).</p>
+          </div>
+        )}
+
+        {url && !parsed && !url.includes('/share/') && !url.includes('fb.watch') && (
           <div className="flex items-start gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg text-sm border border-red-500/20">
             <AlertCircle size={16} className="mt-0.5 shrink-0" />
             <p>Unsupported streaming URL. Please enter a valid YouTube or Facebook Live URL.</p>
