@@ -32,8 +32,10 @@ export async function inviteUserWithPassword(formData: FormData) {
       return { success: false, message: 'Not authenticated' }
     }
 
-    // Get inviter's user record and organization
-    const { data: inviterUser } = await supabase
+    const adminSupabase = getAdminClient()
+
+    // Get inviter's user record and organization using admin client to bypass RLS
+    const { data: inviterUser } = await adminSupabase
       .from('users')
       .select('id')
       .eq('auth_id', authUser.id)
@@ -43,7 +45,7 @@ export async function inviteUserWithPassword(formData: FormData) {
       return { success: false, message: 'Inviter profile not found' }
     }
 
-    const { data: membership } = await supabase
+    const { data: membership } = await adminSupabase
       .from('organization_members')
       .select('org_id, role')
       .eq('user_id', inviterUser.id)
@@ -66,7 +68,6 @@ export async function inviteUserWithPassword(formData: FormData) {
     }
 
     const orgId = membership.org_id
-    const adminSupabase = getAdminClient()
 
     // 2. Check for duplicate email directly using RPC or Auth admin if possible.
     // Easiest is to try finding the user in public.users
