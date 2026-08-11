@@ -71,23 +71,23 @@ function TimelineEvent({ ball, battingXi, bowlingXi }: { ball: any, battingXi: a
   let displayLabel = isWicket ? 'W' : (ball.extras_type ? ball.extras_type.charAt(0).toUpperCase() : runTotal.toString());
 
   return (
-    <div className={`p-4 sm:p-5 border-b border-border-dim/50 flex items-start gap-4 sm:gap-6 transition-all hover:bg-bg-base/30 relative
+    <div className={`p-3 sm:p-4 border-b border-border-dim/50 flex items-start gap-3 sm:gap-4 transition-all hover:bg-bg-base/30 relative
       ${isWicket ? 'bg-red-500/[0.03]' : isBoundary ? 'bg-brand-primary/[0.03]' : ''}`}>
       
-      {/* Over number */}
-      <div className="w-8 sm:w-12 shrink-0 font-mono text-xs sm:text-sm font-bold text-text-muted mt-1 text-right">
-        {overStr}
-      </div>
-      
-      {/* Ball Circle */}
-      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-black text-xs sm:text-sm shrink-0 border border-white/5 ${circleColor}`}>
-        {displayLabel}
+      {/* Over & Ball Circle (Stacked for compact layout) */}
+      <div className="flex flex-col items-center gap-1.5 shrink-0 w-10 sm:w-12 pt-0.5">
+        <div className="font-mono text-[10px] sm:text-xs font-bold text-text-muted">
+          {overStr}
+        </div>
+        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-black text-[10px] sm:text-xs shrink-0 border border-white/5 ${circleColor}`}>
+          {displayLabel}
+        </div>
       </div>
       
       {/* Commentary */}
-      <div className="flex flex-col flex-1 pt-0.5">
-        <span className="text-sm text-text-primary leading-relaxed">
-          <strong className="text-white drop-shadow-sm font-bold tracking-wide mr-1">{strikerName} to {bowlerName},</strong> 
+      <div className="flex flex-col flex-1 min-w-0 pt-0.5">
+        <span className="text-xs sm:text-sm text-text-primary leading-relaxed break-words">
+          <strong className="text-white drop-shadow-sm font-bold tracking-wide mr-1">{bowlerName} to {strikerName},</strong> 
           <span className="text-text-secondary/90">{commentaryText}</span>
         </span>
         {(isWicket || isBoundary) && (
