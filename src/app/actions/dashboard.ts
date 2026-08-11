@@ -11,7 +11,7 @@ export async function fetchDashboardStats() {
     { count: totalPlayers },
     { count: liveMatches }
   ] = await Promise.all([
-    supabase.from('tournaments').select('*', { count: 'exact', head: true }).in('status', ['scheduled', 'ongoing']).is('deleted_at', null),
+    supabase.from('tournaments').select('*', { count: 'exact', head: true }).in('status', ['draft', 'scheduled', 'ongoing', 'registration_open', 'registration_closed', 'upcoming', 'live']).is('deleted_at', null),
     supabase.from('teams').select('*', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('players').select('*', { count: 'exact', head: true }).is('deleted_at', null),
     supabase.from('matches').select('id, team1:teams!matches_team1_id_fkey!inner(id), team2:teams!matches_team2_id_fkey!inner(id)', { count: 'exact', head: true }).eq('status', 'live').is('deleted_at', null).is('team1.deleted_at', null).is('team2.deleted_at', null)
