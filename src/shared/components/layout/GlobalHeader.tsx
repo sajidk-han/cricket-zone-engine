@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Search, Plus, Bell, Moon, Sun, User, Settings, LogOut, Command } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -19,9 +19,25 @@ export function GlobalHeader() {
   const [isPlayerDrawerOpen, setIsPlayerDrawerOpen] = useState(false)
   const [isInviteDrawerOpen, setIsInviteDrawerOpen] = useState(false)
 
+  const createMenuRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
   // Ensure hydration matches server
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target as Node)) {
+        setShowCreateMenu(false)
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
   return (
@@ -67,7 +83,7 @@ export function GlobalHeader() {
       <div className="flex items-center gap-2 sm:gap-4">
         
         {/* Quick Create (+) */}
-        <div className="relative">
+        <div className="relative" ref={createMenuRef}>
           <Button 
             variant="primary" 
             size="sm" 
@@ -132,7 +148,7 @@ export function GlobalHeader() {
         <div className="h-6 w-px bg-bg-elevated hidden sm:block"></div>
 
         {/* User Menu */}
-        <div className="relative">
+        <div className="relative" ref={userMenuRef}>
           <button 
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-transparent hover:ring-brand-primary/50 transition-all"
@@ -146,7 +162,7 @@ export function GlobalHeader() {
                 <p className="text-sm font-bold text-text-primary">Admin User</p>
                 <p className="text-xs text-text-secondary truncate">admin@cricketzone.com</p>
               </div>
-              <Link href="/settings" className="flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-bg-elevated rounded-lg transition-colors">
+              <Link href="/settings" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-bg-elevated rounded-lg transition-colors">
                 <Settings size={16} className="text-text-secondary" /> Settings & Preferences
               </Link>
               <div className="h-px bg-bg-elevated my-1"></div>
