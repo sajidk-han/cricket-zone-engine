@@ -82,7 +82,7 @@ export function WicketResolutionDrawer({
                 const isOut = dismissedPlayers.includes(p.id)
                 return (
                   <option key={p.id} value={p.id} disabled={isOut} className={isOut ? "bg-slate-800 text-red-500 line-through" : "bg-slate-800 text-white"}>
-                    {p.full_name || p.name} {isOut ? "(Out)" : ""}
+                    {isOut ? "🔴 " : ""}{p.full_name || p.name} {isOut ? "(OUT)" : ""}
                   </option>
                 )
               })}

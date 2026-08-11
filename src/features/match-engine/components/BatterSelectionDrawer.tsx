@@ -67,7 +67,7 @@ export function BatterSelectionDrawer({
                 const isOut = dismissedPlayers.includes(b.id)
                 return (
                   <option key={b.id} value={b.id} disabled={isOut} className={isOut ? "bg-slate-800 text-red-500 line-through" : "bg-slate-800 text-white"}>
-                    {b.full_name || b.name} {isOut ? "(Out)" : ""}
+                    {isOut ? "🔴 " : ""}{b.full_name || b.name} {isOut ? "(OUT)" : ""}
                   </option>
                 )
               })}

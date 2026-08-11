@@ -21,11 +21,16 @@ async function fetchPlayingXI(matchId: string, team1Id?: string, team2Id?: strin
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('match_playing_xi')
-    .select(`id, team_id, batting_position, is_captain, is_wicket_keeper, player:players(id, full_name)`)
+    .select(`id, team_id, batting_position, is_captain, is_wicket_keeper, player:players!inner(id, full_name)`)
     .eq('match_id', matchId)
     .order('batting_position', { ascending: true })
 
-  if (data && data.length > 0) return data;
+  if (data && data.length > 0) {
+    return data.map(d => ({
+      ...d,
+      player: Array.isArray(d.player) ? d.player[0] : d.player
+    }));
+  }
 
   // Fallback: If no playing XI is set (since the feature is under development),
   // fetch all players from both teams' rosters.
@@ -42,7 +47,7 @@ async function fetchPlayingXI(matchId: string, team1Id?: string, team2Id?: strin
         batting_position: idx + 1,
         is_captain: false,
         is_wicket_keeper: false,
-        player: tp.player
+        player: Array.isArray(tp.player) ? tp.player[0] : tp.player
       }))
     }
   }

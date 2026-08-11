@@ -202,26 +202,37 @@ export function LiveConsole({ matchId, team1, team2, match, playingXi, currentIn
   const handleBowlerChange = (newBowlerId: string) => {
     // Optimistic UI for bowler change
     setOfflineState((prev: MatchState | null) => {
-      if (!prev) return null;
-      return { ...prev, currentBowlerId: newBowlerId }
+      const baseState: MatchState = prev || {
+        totalRuns: currentInnings.total_runs,
+        totalWickets: currentInnings.total_wickets,
+        legalBallsBowled: Math.floor(currentInnings.overs_bowled) * 6 + Math.round((currentInnings.overs_bowled % 1) * 10),
+        currentStrikerId: baseStrikerId,
+        currentNonStrikerId: baseNonStrikerId,
+        currentBowlerId: baseBowlerId
+      };
+      return { ...baseState, currentBowlerId: newBowlerId }
     })
     setIsBowlerSelectionOpen(false)
     setIsMandatoryBowlerChange(false)
     
-    // In a full implementation, we might send an explicit event for bowler_change
-    // But since the currentBowler is implicit in the next delivery's payload,
-    // Just setting it in state is enough for optimistic UI. It will be sent with the next ball.
     toast.success("Bowler changed")
   }
 
   const handleBatterChange = (replacedId: string, newId: string) => {
     // Optimistic UI for manual batter change
     setOfflineState((prev: MatchState | null) => {
-      if (!prev) return null;
+      const baseState: MatchState = prev || {
+        totalRuns: currentInnings.total_runs,
+        totalWickets: currentInnings.total_wickets,
+        legalBallsBowled: Math.floor(currentInnings.overs_bowled) * 6 + Math.round((currentInnings.overs_bowled % 1) * 10),
+        currentStrikerId: baseStrikerId,
+        currentNonStrikerId: baseNonStrikerId,
+        currentBowlerId: baseBowlerId
+      };
       return { 
-        ...prev, 
-        currentStrikerId: prev.currentStrikerId === replacedId ? newId : prev.currentStrikerId,
-        currentNonStrikerId: prev.currentNonStrikerId === replacedId ? newId : prev.currentNonStrikerId,
+        ...baseState, 
+        currentStrikerId: baseState.currentStrikerId === replacedId ? newId : baseState.currentStrikerId,
+        currentNonStrikerId: baseState.currentNonStrikerId === replacedId ? newId : baseState.currentNonStrikerId,
       }
     })
     setIsBatterSelectionOpen(false)
