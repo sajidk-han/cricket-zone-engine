@@ -11,7 +11,7 @@ import { LogoIcon } from '@/shared/components/LogoIcon'
 import { CreatePlayerDrawer } from '@/features/players/components/CreatePlayerDrawer'
 import { InviteUserDrawer } from '@/features/organizations/components/InviteUserDrawer'
 
-export function GlobalHeader() {
+export function GlobalHeader({ userEmail, userFullName }: { userEmail?: string, userFullName?: string }) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -39,6 +39,10 @@ export function GlobalHeader() {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  const displayName = userFullName || 'User'
+  const displayEmail = userEmail || 'user@cricketzone.com'
+  const initial = (userFullName || userEmail || 'U').charAt(0).toUpperCase()
 
   return (
     <header className="sticky top-0 z-40 w-full bg-bg-surface/80 backdrop-blur-md border-b border-bg-elevated flex items-center justify-between px-4 h-16">
@@ -153,14 +157,14 @@ export function GlobalHeader() {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-sm shadow-sm ring-2 ring-transparent hover:ring-brand-primary/50 transition-all"
           >
-            A
+            {initial}
           </button>
 
           {showUserMenu && (
             <div className="absolute top-10 right-0 w-56 bg-bg-surface border border-bg-elevated rounded-xl shadow-2xl p-1 animate-in fade-in slide-in-from-top-2 duration-200 z-50">
               <div className="px-4 py-3 border-b border-bg-elevated mb-1">
-                <p className="text-sm font-bold text-text-primary">Admin User</p>
-                <p className="text-xs text-text-secondary truncate">admin@cricketzone.com</p>
+                <p className="text-sm font-bold text-text-primary">{displayName}</p>
+                <p className="text-xs text-text-secondary truncate">{displayEmail}</p>
               </div>
               <Link href="/settings" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2 px-3 py-2 text-sm text-text-primary hover:bg-bg-elevated rounded-lg transition-colors">
                 <Settings size={16} className="text-text-secondary" /> Settings & Preferences
