@@ -93,7 +93,7 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
           </div>
         </div>
         <div className="flex gap-3 items-center">
-          <EditTeamModal team={team} />
+          {canDeleteTeam && <EditTeamModal team={team} />}
           {canDeleteTeam && (
             <DeleteEntityButton 
               id={team.id} 
@@ -115,13 +115,13 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
         <TabsContent value="roster">
           <div className="mt-6 flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Current Roster</h2>
-            {roster.length > 0 && <AssignPlayerModal teamId={teamId} teamName={team.name} />}
+            {(canDeleteTeam && roster.length > 0) && <AssignPlayerModal teamId={teamId} teamName={team.name} />}
           </div>
           
           {roster.length === 0 ? (
             <div className="text-center py-12 border border-dashed border-bg-elevated rounded-xl">
               <p className="text-text-secondary mb-4">No players have been assigned to this team yet.</p>
-              <AssignPlayerModal teamId={teamId} teamName={team.name} />
+              {canDeleteTeam && <AssignPlayerModal teamId={teamId} teamName={team.name} />}
             </div>
           ) : (
             <Table>
@@ -147,7 +147,7 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
                     <TableCell className="text-text-secondary capitalize">{p.player_role || 'Player'}</TableCell>
                     <TableCell>{p.jersey || '-'}</TableCell>
                     <TableCell className="text-right">
-                      <TeamPlayerActions player={p} teamId={teamId} />
+                      {canDeleteTeam && <TeamPlayerActions player={p} teamId={teamId} />}
                     </TableCell>
                   </TableRow>
                 ))}

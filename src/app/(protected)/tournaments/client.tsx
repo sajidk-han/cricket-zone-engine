@@ -8,7 +8,15 @@ import { deleteTournament } from '@/app/actions/tournaments'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
-export function TournamentCard({ t }: { t: any }) {
+export function TournamentCard({ 
+  t,
+  currentUserRole = 'viewer',
+  currentUserId = null
+}: { 
+  t: any,
+  currentUserRole?: string,
+  currentUserId?: string | null
+}) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   
@@ -45,6 +53,12 @@ export function TournamentCard({ t }: { t: any }) {
     )
   }
 
+  const canDelete = 
+    currentUserRole === 'owner' || 
+    currentUserRole === 'admin' || 
+    currentUserRole === 'super_admin' || 
+    (currentUserRole === 'organizer' && t.created_by === currentUserId && currentUserId);
+
   return (
     <Card className="group hover:border-green-400/50 transition-all duration-300 bg-bg-surface border-bg-elevated hover:shadow-xl hover:shadow-green-400/5 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -52,14 +66,16 @@ export function TournamentCard({ t }: { t: any }) {
       {/* Dropdown for Actions (Simple implementation for MVP) */}
       <div className="absolute top-4 right-4 z-20 flex gap-2">
         {/* We can add an edit button later, linking to an edit page */}
-        <button 
-          onClick={handleDelete}
-          disabled={isPending}
-          className="p-1.5 bg-bg-elevated/50 hover:bg-red-500/20 text-text-muted hover:text-red-400 rounded-md transition-colors disabled:opacity-50"
-          title="Delete Tournament"
-        >
-          <Trash2 size={16} />
-        </button>
+        {canDelete && (
+          <button 
+            onClick={handleDelete}
+            disabled={isPending}
+            className="p-1.5 bg-bg-elevated/50 hover:bg-red-500/20 text-text-muted hover:text-red-400 rounded-md transition-colors disabled:opacity-50"
+            title="Delete Tournament"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
 
       <CardContent className="p-6 relative z-10 flex flex-col h-full">

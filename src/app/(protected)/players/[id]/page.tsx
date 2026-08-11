@@ -24,6 +24,32 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
     notFound()
   }
 
+  // Get user context for permissions
+  const { data: { user } } = await supabase.auth.getUser()
+  let userRole = 'viewer'
+  let internalUserId = null
+  
+  if (user) {
+    try {
+      const { getAdminClient } = await import('@/lib/supabase/admin')
+      const { getDefaultOrgId } = await import('@/app/actions/org')
+      const adminClient = getAdminClient()
+      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
+      if (dbUser) {
+        internalUserId = dbUser.id
+        const orgId = await getDefaultOrgId()
+        const { data: member } = await adminClient.from('organization_members').select('role').eq('user_id', dbUser.id).eq('org_id', orgId).single()
+        if (member) userRole = member.role
+      }
+    } catch(e) {}
+  }
+
+  const canManagePlayer = 
+    userRole === 'owner' || 
+    userRole === 'admin' || 
+    userRole === 'super_admin' || 
+    (userRole === 'organizer' && player.created_by === internalUserId && internalUserId);
+
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
       {/* Breadcrumb Navigation */}
@@ -39,12 +65,24 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay pointer-events-none"></div>
         <CardContent className="p-8 md:p-12">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <EditableAvatar 
-              playerId={player.id} 
-              orgId={player.org_id} 
-              currentAvatarUrl={player.avatar_url} 
-              playerName={player.full_name} 
-            />
+            {canManagePlayer ? (
+              <EditableAvatar 
+                playerId={player.id} 
+                orgId={player.org_id} 
+                currentAvatarUrl={player.avatar_url} 
+                playerName={player.full_name} 
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-bg-elevated flex items-center justify-center text-2xl font-bold text-text-primary overflow-hidden relative">
+                <OptimizedImage
+                  src={player.avatar_url}
+                  alt={player.full_name}
+                  fallbackInitials={player.full_name.charAt(0)}
+                  fill
+                  className="rounded-full"
+                />
+              </div>
+            )}
             <div className="text-center md:text-left flex-1">
               <h1 className="text-3xl md:text-4xl font-black text-text-primary tracking-tight">{player.full_name}</h1>
               <Link 
@@ -74,7 +112,19 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
         </CardContent>
       </Card>
 
-      <EditPlayerForm player={player} />
+      {canManagePlayer ? (
+        <EditPlayerForm player={player} />
+      ) : (
+        <Card className="bg-bg-surface border-bg-elevated mt-6">
+          <CardContent className="p-6 flex flex-col items-center justify-center text-center">
+            <User size={32} className="text-text-muted mb-4" />
+            <h3 className="font-bold text-text-primary">View Only Mode</h3>
+            <p className="text-text-secondary text-sm mt-1 max-w-sm">
+              You do not have permission to edit this player because it was created by an Administrator or another user.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

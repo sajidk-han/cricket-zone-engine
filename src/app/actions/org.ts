@@ -10,8 +10,11 @@ export async function getDefaultOrgId() {
     throw new Error('Not authenticated')
   }
 
-  // Get public user record
-  const { data: userData } = await supabase
+  // Get public user record using admin client to bypass RLS policies
+  const { getAdminClient } = await import('@/lib/supabase/admin')
+  const adminClient = getAdminClient()
+
+  const { data: userData } = await adminClient
     .from('users')
     .select('id')
     .eq('auth_id', user.id)
@@ -21,8 +24,8 @@ export async function getDefaultOrgId() {
     throw new Error('User profile not found')
   }
 
-  // Get first organization membership
-  const { data: membership } = await supabase
+  // Get first organization membership using admin client
+  const { data: membership } = await adminClient
     .from('organization_members')
     .select('org_id')
     .eq('user_id', userData.id)

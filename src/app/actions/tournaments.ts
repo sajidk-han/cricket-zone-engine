@@ -178,7 +178,37 @@ export async function enrollTeam(tournamentId: string, teamId: string): Promise<
 export async function deleteTournament(tournamentId: string) {
   try {
     const orgId = await getDefaultOrgId()
-    const supabaseAdmin = await createAdminClient()
+    
+    // Check permissions
+    const { createClient, createAdminClient } = await import('@/lib/supabase-server')
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const supabaseAdmin = createAdminClient()
+    
+    const { data: tournament } = await supabaseAdmin
+      .from('tournaments')
+      .select('org_id, created_by')
+      .eq('id', tournamentId)
+      .single()
+
+    if (!tournament) throw new Error('Tournament not found')
+
+    const { data: dbUser } = await supabaseAdmin.from('users').select('id').eq('auth_id', user.id).single()
+    const { data: member } = await supabaseAdmin.from('organization_members').select('role').eq('user_id', dbUser?.id).eq('org_id', orgId).single()
+    const userRole = member?.role || 'viewer'
+
+    const canDelete = 
+      userRole === 'owner' || 
+      userRole === 'admin' || 
+      userRole === 'super_admin' || 
+      (userRole === 'organizer' && tournament.created_by === dbUser?.id);
+
+    if (!canDelete) {
+      return { success: false, message: "Permission denied: You can only delete tournaments you created." }
+    }
+
     const { error } = await supabaseAdmin
       .from('tournaments')
       .update({ deleted_at: new Date().toISOString() })
