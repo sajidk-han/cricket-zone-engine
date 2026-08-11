@@ -61,7 +61,7 @@ export async function inviteUserWithPassword(formData: FormData) {
 
     // Ensure they aren't trying to create another owner/admin unless they are owner/admin?
     // Wait, the prompt says: "The client must NOT be allowed to submit: role = owner, admin, super_admin".
-    if (role === 'owner' || role === 'admin' || (role as string) === 'super_admin') {
+    if ((role as string) === 'owner' || (role as string) === 'admin' || (role as string) === 'super_admin') {
       return { success: false, message: 'Cannot grant administrative roles through this interface' }
     }
 
@@ -150,7 +150,7 @@ export async function inviteUserWithPassword(formData: FormData) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, message: error.errors[0].message }
+      return { success: false, message: (error as any).errors[0].message }
     }
     console.error('Invite error:', error)
     return { success: false, message: 'An unexpected error occurred.' }
