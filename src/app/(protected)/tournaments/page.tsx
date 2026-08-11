@@ -37,7 +37,7 @@ function TournamentSkeleton() {
   )
 }
 
-function EmptyState() {
+function EmptyState({ canCreate }: { canCreate: boolean }) {
   return (
     <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-bg-elevated rounded-2xl bg-bg-surface/30 mt-8">
       <div className="w-24 h-24 bg-brand-primary/10 rounded-full flex items-center justify-center mb-6 ring-8 ring-brand-primary/5">
@@ -48,11 +48,13 @@ function EmptyState() {
         Get started by creating your first tournament. Set up formats, manage teams, and schedule matches all in one place.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto max-w-sm sm:max-w-none">
-        <Link href="/tournaments/new" className="w-full sm:w-auto">
-          <Button variant="primary" className="gap-2 w-full">
-            <Plus size={18} /> Create Tournament
-          </Button>
-        </Link>
+        {canCreate && (
+          <Link href="/tournaments/new" className="w-full sm:w-auto">
+            <Button variant="primary" className="gap-2 w-full">
+              <Plus size={18} /> Create Tournament
+            </Button>
+          </Link>
+        )}
         <Link href="/docs" className="w-full sm:w-auto">
           <Button variant="outline" className="w-full">Read Documentation</Button>
         </Link>
@@ -81,47 +83,17 @@ function getStatusBadge(status: string) {
   )
 }
 
-async function TournamentList() {
-  const res = await getTournaments()
-  
-  if (!res.success) {
-    return (
-      <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500">
-        <h3 className="font-bold mb-2">Failed to load tournaments</h3>
-        <p className="text-sm opacity-80">{res.message}</p>
-      </div>
-    )
-  }
-
-  const tournaments = res.data || []
-
+async function TournamentList({ 
+  tournaments, 
+  userMemberships, 
+  internalUserId 
+}: { 
+  tournaments: any[], 
+  userMemberships: Record<string, string>, 
+  internalUserId: string | null 
+}) {
   if (tournaments.length === 0) {
-    return <EmptyState />
-  }
-
-  // Get user context for permissions
-  const { createClient } = await import('@/lib/supabase-server')
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  let internalUserId = null
-  let userMemberships: Record<string, string> = {}
-  
-  if (user) {
-    try {
-      const { getAdminClient } = await import('@/lib/supabase/admin')
-      const adminClient = getAdminClient()
-      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
-      if (dbUser) {
-        internalUserId = dbUser.id
-        const { data: members } = await adminClient.from('organization_members').select('org_id, role').eq('user_id', dbUser.id)
-        if (members) {
-          members.forEach((m: any) => {
-            userMemberships[m.org_id] = m.role
-          })
-        }
-      }
-    } catch(e) {}
+    return null // Empty state is handled in the main page now
   }
 
   return (
@@ -138,7 +110,36 @@ async function TournamentList() {
   )
 }
 
-export default function TournamentsPage() {
+export default async function TournamentsPage() {
+  const res = await getTournaments()
+  const tournaments = res.success ? (res.data || []) : []
+
+  // Get user context for permissions
+  const { createClient } = await import('@/lib/supabase-server')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  let internalUserId = null
+  let userMemberships: Record<string, string> = {}
+  let canCreateTournament = false
+  
+  if (user) {
+    try {
+      const { getAdminClient } = await import('@/lib/supabase/admin')
+      const adminClient = getAdminClient()
+      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
+      if (dbUser) {
+        internalUserId = dbUser.id
+        const { data: members } = await adminClient.from('organization_members').select('org_id, role').eq('user_id', dbUser.id)
+        if (members) {
+          members.forEach((m: any) => {
+            userMemberships[m.org_id] = m.role
+          })
+          canCreateTournament = members.some((m: any) => ['owner', 'admin', 'super_admin'].includes(m.role))
+        }
+      }
+    } catch(e) {}
+  }
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -156,17 +157,30 @@ export default function TournamentsPage() {
               className="w-full bg-bg-surface border border-bg-elevated rounded-lg py-2 pl-9 pr-4 text-sm text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
             />
           </div>
-          <Link href="/tournaments/new" className="shrink-0">
-            <Button variant="primary" className="gap-2 rounded-lg">
-              <Plus size={18} /> New
-            </Button>
-          </Link>
+          {canCreateTournament && (
+            <Link href="/tournaments/new" className="shrink-0">
+              <Button variant="primary" className="gap-2 rounded-lg">
+                <Plus size={18} /> New
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
-      <Suspense fallback={<TournamentSkeleton />}>
-        <TournamentList />
-      </Suspense>
+      {!res.success ? (
+        <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500">
+          <h3 className="font-bold mb-2">Failed to load tournaments</h3>
+          <p className="text-sm opacity-80">{res.message}</p>
+        </div>
+      ) : tournaments.length === 0 ? (
+        <EmptyState canCreate={canCreateTournament} />
+      ) : (
+        <TournamentList 
+          tournaments={tournaments} 
+          userMemberships={userMemberships} 
+          internalUserId={internalUserId} 
+        />
+      )}
     </div>
   )
 }

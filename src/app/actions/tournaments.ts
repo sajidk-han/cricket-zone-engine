@@ -65,22 +65,11 @@ export async function createTournament(input: CreateTournamentInput): Promise<Ac
 export async function getTournaments(): Promise<ActionResponse> {
   try {
     const supabase = await createClient()
-    const { data: isSuperAdmin } = await supabase.rpc('is_super_admin')
-
-    let orgId = null;
-    if (!isSuperAdmin) {
-      orgId = await getDefaultOrgId()
-      if (!orgId) return { success: false, message: "Organization not found", code: "NO_ORG" }
-    }
 
     let query = supabase.from('tournaments')
       .select('*')
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
-
-    if (!isSuperAdmin) {
-      query = query.eq('org_id', orgId)
-    }
 
     const { data, error } = await query
 
