@@ -152,7 +152,7 @@ export async function getMatchSummary(matchId: string) {
   const { data, error } = await supabase
     .from('matches')
     .select(`
-      id, status, scheduled_time, match_type, scheduled_overs, 
+      id, org_id, status, scheduled_time, match_type, scheduled_overs, 
       team1_id, team2_id, toss_winner_id, toss_decision, current_innings, current_version, match_statistics, live_stream_url,
       team1:teams!inner!team1_id(id, name, short_name, logo_url),
       team2:teams!inner!team2_id(id, name, short_name, logo_url),

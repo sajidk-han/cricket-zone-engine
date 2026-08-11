@@ -24,7 +24,7 @@ export default async function MatchScoringPage({ params }: { params: Promise<{ i
           .from('organization_members')
           .select('role')
           .eq('user_id', dbUser.id)
-          .eq('org_id', match.tournament?.org_id)
+          .eq('org_id', match.org_id)
           .single()
         if (member) userRole = member.role
       }

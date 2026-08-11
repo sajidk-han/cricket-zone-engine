@@ -39,7 +39,7 @@ export default async function MatchWorkspaceLayout({
           .from('organization_members')
           .select('role')
           .eq('user_id', dbUser.id)
-          .eq('org_id', match.tournament?.org_id)
+          .eq('org_id', match.org_id)
           .single()
         if (member) userRole = member.role
       }
