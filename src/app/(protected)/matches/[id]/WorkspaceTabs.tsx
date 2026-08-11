@@ -16,13 +16,13 @@ import {
   ShieldCheck 
 } from 'lucide-react'
 
-export function WorkspaceTabs({ matchId }: { matchId: string }) {
+export function WorkspaceTabs({ matchId, userRole = 'viewer' }: { matchId: string, userRole?: string }) {
   const pathname = usePathname()
   const containerRef = useRef<HTMLDivElement>(null)
   
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 })
 
-  const tabs = [
+  const allTabs = [
     { href: `/matches/${matchId}/overview`, icon: <LayoutDashboard size={16}/>, label: "Overview" },
     { href: `/matches/${matchId}/scoring`, icon: <Activity size={16}/>, label: "Scoring" },
     { href: `/matches/${matchId}/scorecard`, icon: <FileText size={16}/>, label: "Scorecard" },
@@ -33,6 +33,13 @@ export function WorkspaceTabs({ matchId }: { matchId: string }) {
     { href: `/matches/${matchId}/audit-log`, icon: <ShieldCheck size={16}/>, label: "Audit Log" },
     { href: `/matches/${matchId}/settings`, icon: <Settings size={16}/>, label: "Settings" }
   ]
+
+  const tabs = allTabs.filter(tab => {
+    if (['Scoring', 'Settings', 'Officials', 'Audit Log'].includes(tab.label)) {
+      return !['viewer', 'organizer'].includes(userRole);
+    }
+    return true;
+  });
 
   useEffect(() => {
     // Find the active tab element

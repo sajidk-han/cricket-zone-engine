@@ -1,6 +1,6 @@
 import React from 'react'
 import { getMatchSummary } from '@/app/actions/matches'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import { LiveConsole } from '@/features/match-engine/components/LiveConsole'
 
@@ -9,6 +9,32 @@ export default async function MatchScoringPage({ params }: { params: Promise<{ i
   const res = await getMatchSummary(resolvedParams.id)
   if (!res.success || !res.data) notFound()
   const match = res.data
+
+  // Fetch user role
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  let userRole = 'viewer'
+  if (user) {
+    try {
+      const { getAdminClient } = await import('@/lib/supabase/admin')
+      const adminClient = getAdminClient()
+      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
+      if (dbUser) {
+        const { data: member } = await adminClient
+          .from('organization_members')
+          .select('role')
+          .eq('user_id', dbUser.id)
+          .eq('org_id', match.tournament?.org_id)
+          .single()
+        if (member) userRole = member.role
+      }
+    } catch(e) {}
+  }
+
+  // Protect route from organizers and viewers
+  if (['viewer', 'organizer'].includes(userRole)) {
+    redirect(`/matches/${match.id}/overview`)
+  }
 
   return (
     <div className="space-y-6">

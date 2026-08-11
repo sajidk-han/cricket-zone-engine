@@ -22,6 +22,30 @@ export default async function MatchWorkspaceLayout({
 
   const match = res.data
 
+  // Fetch user role
+  const { createClient } = await import('@/lib/supabase-server')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  let userRole = 'viewer'
+  if (user) {
+    try {
+      const { getAdminClient } = await import('@/lib/supabase/admin')
+      const adminClient = getAdminClient()
+      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
+      if (dbUser) {
+        // Tournament org_id is where this match belongs
+        const { data: member } = await adminClient
+          .from('organization_members')
+          .select('role')
+          .eq('user_id', dbUser.id)
+          .eq('org_id', match.tournament?.org_id)
+          .single()
+        if (member) userRole = member.role
+      }
+    } catch(e) {}
+  }
+
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 overflow-x-hidden pb-10">
       {/* Breadcrumb Navigation */}
@@ -55,7 +79,7 @@ export default async function MatchWorkspaceLayout({
         </div>
 
         {/* Enterprise Match Route Structure (Rule 6) */}
-        <WorkspaceTabs matchId={match.id} />
+        <WorkspaceTabs matchId={match.id} userRole={userRole} />
 
         {/* Workspace Content */}
         <div className="py-2">
