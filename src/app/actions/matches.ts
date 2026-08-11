@@ -302,6 +302,25 @@ export async function updateLiveStreamUrl(matchId: string, url: string | null): 
     let finalUrl: string | null = null
     
     if (url) {
+      // Resolve Facebook short links because Facebook iframe player rejects them
+      if (url.includes('facebook.com/share/') || url.includes('fb.watch/')) {
+        try {
+          const res = await fetch(url, { 
+            redirect: 'manual', 
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' } 
+          })
+          if (res.status >= 300 && res.status < 400) {
+            const location = res.headers.get('location')
+            // Don't use the fallback unsupported browser link
+            if (location && !location.includes('unsupportedbrowser')) {
+              url = location
+            }
+          }
+        } catch (e) {
+          console.error('Failed to resolve Facebook short link', e)
+        }
+      }
+
       const { parseLiveStreamUrl } = await import('@/features/match-engine/utils/liveStreamParser')
       const parsed = parseLiveStreamUrl(url)
       
