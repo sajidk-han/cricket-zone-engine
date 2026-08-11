@@ -7,6 +7,27 @@ import { CreateTeamDrawer } from '@/features/teams/components/CreateTeamDrawer'
 export default async function TeamsList() {
   const teams = await fetchTeams()
 
+  // Get user context for permissions
+  const { createClient } = await import('@/lib/supabase-server')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  let canCreateTeam = false;
+  
+  if (user) {
+    try {
+      const { getAdminClient } = await import('@/lib/supabase/admin')
+      const adminClient = getAdminClient()
+      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
+      if (dbUser) {
+        const { data: members } = await adminClient.from('organization_members').select('role').eq('user_id', dbUser.id)
+        if (members) {
+          canCreateTeam = members.some((m: any) => ['owner', 'admin', 'organizer', 'super_admin'].includes(m.role))
+        }
+      }
+    } catch(e) {}
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
       {/* Header */}
@@ -15,7 +36,7 @@ export default async function TeamsList() {
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">Teams Directory</h1>
           <p className="text-text-secondary mt-1">Manage all franchise and club teams in your organization.</p>
         </div>
-        <CreateTeamDrawer />
+        {canCreateTeam && <CreateTeamDrawer />}
       </div>
 
       {/* Grid */}

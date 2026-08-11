@@ -32,13 +32,12 @@ export default async function PlayerProfilePage({ params }: { params: Promise<{ 
   if (user) {
     try {
       const { getAdminClient } = await import('@/lib/supabase/admin')
-      const { getDefaultOrgId } = await import('@/app/actions/org')
       const adminClient = getAdminClient()
       const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
       if (dbUser) {
         internalUserId = dbUser.id
-        const orgId = await getDefaultOrgId()
-        const { data: member } = await adminClient.from('organization_members').select('role').eq('user_id', dbUser.id).eq('org_id', orgId).single()
+        // Fetch role specifically for the organization that owns this player
+        const { data: member } = await adminClient.from('organization_members').select('role').eq('user_id', dbUser.id).eq('org_id', player.org_id).single()
         if (member) userRole = member.role
       }
     } catch(e) {}

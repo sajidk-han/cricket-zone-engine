@@ -104,20 +104,22 @@ async function TournamentList() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
-  let userRole = 'viewer'
   let internalUserId = null
+  let userMemberships: Record<string, string> = {}
   
   if (user) {
     try {
       const { getAdminClient } = await import('@/lib/supabase/admin')
-      const { getDefaultOrgId } = await import('@/app/actions/org')
       const adminClient = getAdminClient()
       const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
       if (dbUser) {
         internalUserId = dbUser.id
-        const orgId = await getDefaultOrgId()
-        const { data: member } = await adminClient.from('organization_members').select('role').eq('user_id', dbUser.id).eq('org_id', orgId).single()
-        if (member) userRole = member.role
+        const { data: members } = await adminClient.from('organization_members').select('org_id, role').eq('user_id', dbUser.id)
+        if (members) {
+          members.forEach((m: any) => {
+            userMemberships[m.org_id] = m.role
+          })
+        }
       }
     } catch(e) {}
   }
@@ -128,7 +130,7 @@ async function TournamentList() {
         <TournamentCard 
           key={t.id} 
           t={t} 
-          currentUserRole={userRole} 
+          userMemberships={userMemberships} 
           currentUserId={internalUserId}
         />
       ))}

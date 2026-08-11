@@ -10,11 +10,11 @@ import { useRouter } from 'next/navigation'
 
 export function TournamentCard({ 
   t,
-  currentUserRole = 'viewer',
+  userMemberships = {},
   currentUserId = null
 }: { 
   t: any,
-  currentUserRole?: string,
+  userMemberships?: Record<string, string>,
   currentUserId?: string | null
 }) {
   const router = useRouter()
@@ -53,11 +53,12 @@ export function TournamentCard({
     )
   }
 
+  const roleInOrg = userMemberships[t.org_id] || 'viewer';
   const canDelete = 
-    currentUserRole === 'owner' || 
-    currentUserRole === 'admin' || 
-    currentUserRole === 'super_admin' || 
-    (currentUserRole === 'organizer' && t.created_by === currentUserId && currentUserId);
+    roleInOrg === 'owner' || 
+    roleInOrg === 'admin' || 
+    roleInOrg === 'super_admin' || 
+    (roleInOrg === 'organizer' && t.created_by === currentUserId && currentUserId);
 
   return (
     <Card className="group hover:border-green-400/50 transition-all duration-300 bg-bg-surface border-bg-elevated hover:shadow-xl hover:shadow-green-400/5 relative overflow-hidden">

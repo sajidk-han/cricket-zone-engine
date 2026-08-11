@@ -12,11 +12,11 @@ import { toast } from 'react-hot-toast'
 
 export function PlayersDirectoryClient({ 
   initialPlayers,
-  currentUserRole = 'viewer',
+  userMemberships = {},
   currentUserId = null
 }: { 
   initialPlayers: any[],
-  currentUserRole?: string,
+  userMemberships?: Record<string, string>,
   currentUserId?: string | null
 }) {
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,10 +33,16 @@ export function PlayersDirectoryClient({
 
   // Check if current user can delete a specific player
   const canDelete = (player: any) => {
-    if (currentUserRole === 'owner' || currentUserRole === 'admin' || currentUserRole === 'super_admin') return true;
-    if (currentUserRole === 'organizer' && player.created_by === currentUserId && currentUserId) return true;
+    const roleInOrg = userMemberships[player.org_id] || 'viewer';
+    if (roleInOrg === 'owner' || roleInOrg === 'admin' || roleInOrg === 'super_admin') return true;
+    if (roleInOrg === 'organizer' && player.created_by === currentUserId && currentUserId) return true;
     return false;
   }
+
+  // Can create player if they are owner/admin/organizer in AT LEAST ONE organization
+  const canCreate = Object.values(userMemberships).some(role => 
+    ['owner', 'admin', 'organizer', 'super_admin'].includes(role)
+  );
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
@@ -46,7 +52,7 @@ export function PlayersDirectoryClient({
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">Players Directory</h1>
           <p className="text-text-secondary mt-1">Manage all players registered in your organization.</p>
         </div>
-        {(currentUserRole === 'owner' || currentUserRole === 'admin' || currentUserRole === 'organizer' || currentUserRole === 'super_admin') && (
+        {canCreate && (
           <CreatePlayerDrawer />
         )}
       </div>
