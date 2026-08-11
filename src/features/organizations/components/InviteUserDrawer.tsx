@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Mail } from 'lucide-react'
 import { Button } from '@/shared/components/ui/Button'
 import { Drawer } from '@/shared/components/ui/Drawer'
-import { toast } from 'sonner'
+import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
 import { inviteUserWithPassword } from '@/app/actions/invite'
