@@ -10,7 +10,15 @@ import { OptimizedImage } from '@/features/fanzone/components/OptimizedImage'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
 
-export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any[] }) {
+export function PlayersDirectoryClient({ 
+  initialPlayers,
+  currentUserRole = 'viewer',
+  currentUserId = null
+}: { 
+  initialPlayers: any[],
+  currentUserRole?: string,
+  currentUserId?: string | null
+}) {
   const [searchQuery, setSearchQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState('All Roles')
   const router = useRouter()
@@ -23,6 +31,13 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
     return matchesSearch && matchesRole
   })
 
+  // Check if current user can delete a specific player
+  const canDelete = (player: any) => {
+    if (currentUserRole === 'owner' || currentUserRole === 'admin' || currentUserRole === 'super_admin') return true;
+    if (currentUserRole === 'organizer' && player.created_by === currentUserId && currentUserId) return true;
+    return false;
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
       {/* Header */}
@@ -31,7 +46,9 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
           <h1 className="text-3xl font-bold text-text-primary tracking-tight">Players Directory</h1>
           <p className="text-text-secondary mt-1">Manage all players registered in your organization.</p>
         </div>
-        <CreatePlayerDrawer />
+        {(currentUserRole === 'owner' || currentUserRole === 'admin' || currentUserRole === 'organizer' || currentUserRole === 'super_admin') && (
+          <CreatePlayerDrawer />
+        )}
       </div>
 
       {/* Filters */}
@@ -126,26 +143,29 @@ export function PlayersDirectoryClient({ initialPlayers }: { initialPlayers: any
                       <Link href={`/players/${player.id}`} className="text-sm font-medium text-brand-primary hover:text-brand-primary/80 transition-colors">
                         Profile
                       </Link>
-                      <button 
-                        onClick={async () => {
-                          if(confirm('Are you sure you want to delete this player?')) {
-                            const { deletePlayer } = await import('@/app/actions/players')
-                            const res = await deletePlayer(player.id)
-                            if(res.success) {
-                              toast.success('Player deleted successfully')
-                              startTransition(() => {
-                                router.refresh()
-                              })
-                            } else {
-                              toast.error(res.message)
+                      
+                      {canDelete(player) && (
+                        <button 
+                          onClick={async () => {
+                            if(confirm('Are you sure you want to delete this player?')) {
+                              const { deletePlayer } = await import('@/app/actions/players')
+                              const res = await deletePlayer(player.id)
+                              if(res.success) {
+                                toast.success('Player deleted successfully')
+                                startTransition(() => {
+                                  router.refresh()
+                                })
+                              } else {
+                                toast.error(res.message)
+                              }
                             }
-                          }
-                        }}
-                        disabled={isPending}
-                        className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
-                      >
-                        Delete
-                      </button>
+                          }}
+                          disabled={isPending}
+                          className="text-sm font-medium text-red-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

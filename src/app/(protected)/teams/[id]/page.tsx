@@ -26,7 +26,7 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
   const matches = await fetchTeamMatches(teamId)
 
   // Compute stats
-  const stats = { won: 0, lost: 0, tied: 0 }
+    const stats = { won: 0, lost: 0, tied: 0 }
   matches.forEach((m: any) => {
     if (m.status === 'completed' || m.status === 'verified' || m.status === 'archived') {
       if (m.winning_team_id === teamId) {
@@ -38,6 +38,35 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
       }
     }
   })
+
+  // Get user context for permissions
+  const { createClient } = await import('@/lib/supabase-server')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  let userRole = 'viewer'
+  let internalUserId = null
+  
+  if (user) {
+    try {
+      const { getAdminClient } = await import('@/lib/supabase/admin')
+      const { getDefaultOrgId } = await import('@/app/actions/org')
+      const adminClient = getAdminClient()
+      const { data: dbUser } = await adminClient.from('users').select('id').eq('auth_id', user.id).single()
+      if (dbUser) {
+        internalUserId = dbUser.id
+        const orgId = await getDefaultOrgId()
+        const { data: member } = await adminClient.from('organization_members').select('role').eq('user_id', dbUser.id).eq('org_id', orgId).single()
+        if (member) userRole = member.role
+      }
+    } catch(e) {}
+  }
+
+  const canDeleteTeam = 
+    userRole === 'owner' || 
+    userRole === 'admin' || 
+    userRole === 'super_admin' || 
+    (userRole === 'organizer' && team.created_by === internalUserId && internalUserId);
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -65,12 +94,14 @@ export default async function TeamWorkspace({ params }: { params: Promise<{ id: 
         </div>
         <div className="flex gap-3 items-center">
           <EditTeamModal team={team} />
-          <DeleteEntityButton 
-            id={team.id} 
-            onDelete={deleteTeam} 
-            confirmMessage={`Are you sure you want to delete ${team.name}?`}
-            redirectTo="/teams"
-          />
+          {canDeleteTeam && (
+            <DeleteEntityButton 
+              id={team.id} 
+              onDelete={deleteTeam} 
+              confirmMessage={`Are you sure you want to delete ${team.name}?`}
+              redirectTo="/teams"
+            />
+          )}
         </div>
       </div>
 

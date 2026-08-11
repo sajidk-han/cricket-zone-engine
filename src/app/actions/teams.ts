@@ -64,8 +64,38 @@ export async function fetchTeamMatches(teamId: string) {
 export async function deleteTeam(teamId: string) {
   try {
     const orgId = await getDefaultOrgId()
-    const supabase = await createAdminClient()
-    const { error } = await supabase
+    
+    // Check permissions
+    const { createClient, createAdminClient } = await import('@/lib/supabase-server')
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const supabaseAdmin = createAdminClient()
+    
+    const { data: team } = await supabaseAdmin
+      .from('teams')
+      .select('org_id, created_by')
+      .eq('id', teamId)
+      .single()
+
+    if (!team) throw new Error('Team not found')
+
+    const { data: dbUser } = await supabaseAdmin.from('users').select('id').eq('auth_id', user.id).single()
+    const { data: member } = await supabaseAdmin.from('organization_members').select('role').eq('user_id', dbUser?.id).eq('org_id', orgId).single()
+    const userRole = member?.role || 'viewer'
+
+    const canDelete = 
+      userRole === 'owner' || 
+      userRole === 'admin' || 
+      userRole === 'super_admin' || 
+      (userRole === 'organizer' && team.created_by === dbUser?.id);
+
+    if (!canDelete) {
+      return { success: false, message: "Permission denied: You can only delete teams you created." }
+    }
+
+    const { error } = await supabaseAdmin
       .from('teams')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', teamId)

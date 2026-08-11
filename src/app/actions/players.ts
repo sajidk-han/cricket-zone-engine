@@ -69,16 +69,39 @@ export async function createPlayer(formData: FormData) {
 export async function deletePlayer(playerId: string) {
   try {
     const orgId = await getDefaultOrgId()
-    const supabaseAdmin = await createAdminClient()
     
-    // First, get the player's org_id and avatar_url to clean up storage
+    // Check permissions
+    const { createClient, createAdminClient } = await import('@/lib/supabase-server')
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+
+    const supabaseAdmin = createAdminClient()
+    
+    // First, get the player's org_id, avatar_url, and created_by to clean up storage and check permissions
     const { data: player } = await supabaseAdmin
       .from('players')
-      .select('org_id, avatar_url')
+      .select('org_id, avatar_url, created_by')
       .eq('id', playerId)
       .single()
 
-    if (player?.avatar_url) {
+    if (!player) throw new Error('Player not found')
+
+    const { data: dbUser } = await supabaseAdmin.from('users').select('id').eq('auth_id', user.id).single()
+    const { data: member } = await supabaseAdmin.from('organization_members').select('role').eq('user_id', dbUser?.id).eq('org_id', orgId).single()
+    const userRole = member?.role || 'viewer'
+
+    const canDelete = 
+      userRole === 'owner' || 
+      userRole === 'admin' || 
+      userRole === 'super_admin' || 
+      (userRole === 'organizer' && player.created_by === dbUser?.id);
+
+    if (!canDelete) {
+      return { success: false, message: "Permission denied: You can only delete players you created." }
+    }
+
+    if (player.avatar_url) {
       await removePlayerAvatar(player.org_id, playerId)
     }
 
