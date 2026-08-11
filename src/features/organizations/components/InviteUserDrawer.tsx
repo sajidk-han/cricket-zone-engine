@@ -84,7 +84,7 @@ export function InviteUserDrawer({
         position="right"
         size="md"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">
@@ -95,6 +95,8 @@ export function InviteUserDrawer({
                 type="email" 
                 required
                 placeholder="colleague@example.com"
+                autoComplete="off"
+                data-lpignore="true"
                 className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
               />
             </div>
@@ -111,6 +113,8 @@ export function InviteUserDrawer({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Strong password"
+                  autoComplete="new-password"
+                  data-lpignore="true"
                   className="w-full bg-bg-base border border-bg-elevated rounded-lg px-4 py-2.5 text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
                 />
                 <button
